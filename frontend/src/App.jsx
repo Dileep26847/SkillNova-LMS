@@ -1,16 +1,23 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Courses from "./pages/Courses";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-      <div className="bg-white shadow-xl rounded-xl p-10 text-center">
-        <h1 className="text-4xl font-bold text-blue-600">
-          🚀 SkillNova LMS
-        </h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/courses" element={<Courses />} />
 
-        <p className="mt-4 text-gray-600">
-          React + Vite + Tailwind CSS is Working!
-        </p>
-      </div>
-    </div>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
