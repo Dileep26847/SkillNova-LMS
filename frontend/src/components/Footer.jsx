@@ -3,89 +3,169 @@ import {
   FaInstagram,
   FaLinkedin,
   FaGithub,
+  FaArrowUp,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-slate-950 text-white">
 
-      <div className="max-w-7xl mx-auto px-8 py-20 grid md:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-8 py-20">
 
-        <div>
+        <div className="grid md:grid-cols-4 gap-12">
 
-          <h2 className="text-3xl font-bold text-blue-400">
-            SkillNova
-          </h2>
+          {/* Logo */}
 
-          <p className="mt-5 text-gray-400">
-            Learn today's most valuable skills from industry experts.
-          </p>
+          <div>
 
-        </div>
+            <h2 className="text-4xl font-bold text-blue-500">
+              SkillNova
+            </h2>
 
-        <div>
+            <p className="mt-5 text-gray-400 leading-7">
+              SkillNova is a modern Learning Management System helping students
+              master industry-ready skills through high-quality online courses.
+            </p>
 
-          <h3 className="font-bold text-xl mb-4">
-            Quick Links
-          </h3>
+          </div>
 
-          <ul className="space-y-3 text-gray-400">
+          {/* Links */}
 
-            <li>Home</li>
+          <div>
 
-            <li>Courses</li>
+            <h3 className="text-xl font-bold mb-6">
+              Quick Links
+            </h3>
 
-            <li>About</li>
+            <ul className="space-y-3 text-gray-400">
 
-            <li>Contact</li>
+              <li>
+                <Link to="/" className="hover:text-white">
+                  Home
+                </Link>
+              </li>
 
-          </ul>
+              <li>
+                <Link to="/courses" className="hover:text-white">
+                  Courses
+                </Link>
+              </li>
 
-        </div>
+              <li>
+                <Link to="/login" className="hover:text-white">
+                  Login
+                </Link>
+              </li>
 
-        <div>
+              <li>
+                <Link to="/register" className="hover:text-white">
+                  Register
+                </Link>
+              </li>
 
-          <h3 className="font-bold text-xl mb-4">
-            Support
-          </h3>
+            </ul>
 
-          <ul className="space-y-3 text-gray-400">
+          </div>
 
-            <li>Help Center</li>
+          {/* Support */}
 
-            <li>Privacy Policy</li>
+          <div>
 
-            <li>Terms & Conditions</li>
+            <h3 className="text-xl font-bold mb-6">
+              Support
+            </h3>
 
-          </ul>
+            <ul className="space-y-3 text-gray-400">
 
-        </div>
+              <li className="hover:text-white cursor-pointer">
+                Help Center
+              </li>
 
-        <div>
+              <li className="hover:text-white cursor-pointer">
+                Privacy Policy
+              </li>
 
-          <h3 className="font-bold text-xl mb-4">
-            Follow Us
-          </h3>
+              <li className="hover:text-white cursor-pointer">
+                Terms & Conditions
+              </li>
 
-          <div className="flex gap-5 text-3xl">
+              <li className="hover:text-white cursor-pointer">
+                Contact Us
+              </li>
 
-            <FaFacebook className="hover:text-blue-500 cursor-pointer" />
+            </ul>
 
-            <FaInstagram className="hover:text-pink-500 cursor-pointer" />
+          </div>
 
-            <FaLinkedin className="hover:text-blue-400 cursor-pointer" />
+          {/* Social */}
 
-            <FaGithub className="hover:text-gray-300 cursor-pointer" />
+          <div>
+
+            <h3 className="text-xl font-bold mb-6">
+              Connect
+            </h3>
+
+            <div className="flex gap-4">
+
+              <a
+                href="#"
+                className="bg-slate-800 p-3 rounded-xl hover:bg-blue-600 transition"
+              >
+                <FaFacebook />
+              </a>
+
+              <a
+                href="#"
+                className="bg-slate-800 p-3 rounded-xl hover:bg-pink-600 transition"
+              >
+                <FaInstagram />
+              </a>
+
+              <a
+                href="#"
+                className="bg-slate-800 p-3 rounded-xl hover:bg-sky-600 transition"
+              >
+                <FaLinkedin />
+              </a>
+
+              <a
+                href="#"
+                className="bg-slate-800 p-3 rounded-xl hover:bg-gray-600 transition"
+              >
+                <FaGithub />
+              </a>
+
+            </div>
+
+            <button
+              onClick={() =>
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                })
+              }
+              className="mt-8 bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl flex items-center gap-2"
+            >
+              <FaArrowUp />
+              Back to Top
+            </button>
 
           </div>
 
         </div>
 
-      </div>
+        <div className="border-t border-slate-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center">
 
-      <div className="border-t border-gray-800 py-6 text-center text-gray-500">
+          <p className="text-gray-500">
+            © 2026 SkillNova LMS. All Rights Reserved.
+          </p>
 
-        © 2026 SkillNova LMS. All Rights Reserved.
+          <p className="text-gray-500 mt-4 md:mt-0">
+            Built with ❤️ using React, Node.js & MySQL
+          </p>
+
+        </div>
 
       </div>
 

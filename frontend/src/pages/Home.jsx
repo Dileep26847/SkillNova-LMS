@@ -1,26 +1,31 @@
-import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import TrustedBrands from "../components/TrustedBrands";
-import Categories from "../components/Categories";
+import Categories from "../components/categories";
 import FeaturedCourses from "../components/FeaturedCourses";
 import WhyChoose from "../components/WhyChoose";
+import DataWave from "../components/DataWave";
+import TrustedBrands from "../components/TrustedBrands";
 import Testimonials from "../components/Testimonials";
 import CallToAction from "../components/CallToAction";
-import Footer from "../components/Footer";
 
 function Home() {
   return (
-    <>
-      <Navbar />
+    <div className="bg-slate-50">
       <Hero />
-      <TrustedBrands />
+
       <Categories />
+
       <FeaturedCourses />
+
       <WhyChoose />
+
+      <DataWave />
+
+      <TrustedBrands />
+
       <Testimonials />
+
       <CallToAction />
-      <Footer />
-    </>
+    </div>
   );
 }
 
