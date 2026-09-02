@@ -3,7 +3,9 @@ import axios from "axios";
 import API_BASE_URL from "../config/api";
 
 const API = `${API_BASE_URL}/admin`;
-const UPLOAD_API = "http://localhost:5000/api/upload";
+
+
+const UPLOAD_API = `${API_BASE_URL}/upload`;
 
 const token = () => localStorage.getItem("token");
 
@@ -111,6 +113,7 @@ export const uploadThumbnail = async (file) => {
         "Content-Type": "multipart/form-data",
       },
     }
+
 
   );
 
