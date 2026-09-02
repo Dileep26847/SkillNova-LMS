@@ -1,180 +1,643 @@
+// ======================================
+// SkillNova LMS - Backend Server
+// ======================================
+
 const express = require("express");
 const cors = require("cors");
+
 require("dotenv").config();
 
-// =====================================
-// Database Connection
-// =====================================
+// ======================================
+// DATABASE CONNECTION
+// ======================================
+
 require("./database/db");
 
-// =====================================
-// Initialize Express
-// =====================================
+// ======================================
+// ROUTE IMPORTS
+// ======================================
+
+const authRoutes =
+    require("./routes/authRoutes");
+
+const profileRoutes =
+    require("./routes/profileRoutes");
+
+const courseRoutes =
+    require("./routes/courseRoutes");
+
+const lessonRoutes =
+    require("./routes/lessonRoutes");
+
+const studentLessonRoutes =
+    require("./routes/studentLessonRoutes");
+
+const enrollmentRoutes =
+    require("./routes/enrollmentRoutes");
+
+const progressRoutes =
+    require("./routes/progressRoutes");
+
+const videoProgressRoutes =
+    require("./routes/videoProgressRoutes");
+
+const assignmentRoutes =
+    require("./routes/assignmentRoutes");
+
+const assignmentSubmissionRoutes =
+    require("./routes/assignmentSubmissionRoutes");
+
+// ======================================
+// STUDENT ASSIGNMENT ROUTES
+// ======================================
+
+const studentAssignmentRoutes =
+    require("./routes/studentAssignmentRoutes");
+
+const studentSubmissionRoutes =
+    require("./routes/studentSubmissionRoutes");
+
+const studentQuizRoutes =
+    require("./routes/studentQuizRoutes");
+
+// ======================================
+// CERTIFICATE ROUTES
+// ======================================
+
+const certificateRoutes =
+    require("./routes/certificateRoutes");
+
+// ======================================
+// DASHBOARD ROUTES
+// ======================================
+
+const studentDashboardRoutes =
+    require("./routes/studentDashboardRoutes");
+
+const dashboardRoutes =
+    require("./routes/dashboardRoutes");
+
+// ======================================
+// LIVE CLASS ROUTES
+// ======================================
+
+const liveClassRoutes =
+    require("./routes/liveClassRoutes");
+
+const zoomWebhookRoutes =
+    require("./routes/zoomWebhookRoutes");
+
+// ======================================
+// SUPPORT ROUTES
+// ======================================
+
+const supportRoutes =
+    require("./routes/supportRoutes");
+
+// ======================================
+// ADMIN ROUTES
+// ======================================
+
+const adminRoutes =
+    require("./routes/adminRoutes");
+
+const adminStudentRoutes =
+    require("./routes/adminStudentRoutes");
+
+const adminCourseRoutes =
+    require("./routes/adminCourseRoutes");
+
+// ======================================
+// ADMIN REPORT ROUTES
+// ======================================
+
+const adminReportsRoutes =
+    require("./routes/adminReportsRoutes");
+
+// ======================================
+// BATCH ROUTES
+// ======================================
+
+const batchRoutes =
+    require("./routes/batchRoutes");
+
+// ======================================
+// MENTOR ROUTES
+// ======================================
+
+const mentorRoutes =
+    require("./routes/mentorRoutes");
+
+// ======================================
+// SETTINGS ROUTES
+// ======================================
+
+const settingsRoutes =
+    require("./routes/settingsRoutes");
+
+// ======================================
+// NOTIFICATION ROUTES
+// ======================================
+
+const notificationRoutes =
+    require("./routes/notificationRoutes");
+
+// ======================================
+// ANALYTICS ROUTES
+// ======================================
+
+const analyticsRoutes =
+    require("./routes/analyticsRoutes");
+
+// ======================================
+// UPLOAD ROUTES
+// ======================================
+
+const uploadRoutes =
+    require("./routes/uploadRoutes");
+
+// ======================================
+// EXPRESS APP
+// ======================================
+
 const app = express();
 
-// =====================================
-// Global Middleware
-// =====================================
-app.use(cors());
+// ======================================
+// PORT
+// ======================================
 
-app.use(express.json());
+const PORT =
+    process.env.PORT || 5000;
 
-app.use(express.urlencoded({ extended: true }));
+// ======================================
+// CORS
+// ======================================
 
-// =====================================
-// Static Folder
-// =====================================
-app.use("/uploads", express.static("uploads"));
+// Supports:
+// Local development:
+// CORS_ORIGINS=http://localhost:5173
+//
+// Production:
+// CORS_ORIGINS=https://your-app.vercel.app
+//
+// Multiple origins:
+// CORS_ORIGINS=http://localhost:5173,https://your-app.vercel.app
 
-// =====================================
-// Import Middleware
-// =====================================
-const verifyToken = require("./middleware/authMiddleware");
+const allowedOrigins = (
+    process.env.CORS_ORIGINS ||
+    "http://localhost:5173"
+)
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
-// =====================================
-// Import Routes
-// =====================================
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userroutes");
-const courseRoutes = require("./routes/courseRoutes");
-const lessonRoutes = require("./routes/lessonRoutes");
-const uploadRoutes = require("./routes/uploadRoutes");
-const enrollmentRoutes = require("./routes/enrollmentRoutes");
-const profileRoutes = require("./routes/profileRoutes");
-const settingsRoutes = require("./routes/settingsRoutes");
-const quizRoutes = require("./routes/quizRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
+app.use(
+    cors({
+        origin: (origin, callback) => {
 
-// Admin
-const adminRoutes = require("./routes/adminRoutes");
-const adminCourseRoutes = require("./routes/adminCourseRoutes");
+            // Allow requests with no origin
+            // such as Postman/server-to-server requests.
+            if (!origin) {
+                return callback(null, true);
+            }
 
-// =====================================
-// Home Route
-// =====================================
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "🚀 Welcome to DataWave LMS Backend API",
-  });
-});
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
-// =====================================
-// Authentication
-// =====================================
-app.use("/api/auth", authRoutes);
+            console.warn(
+                `CORS blocked origin: ${origin}`
+            );
 
-// =====================================
-// Users
-// =====================================
-app.use("/api/user", userRoutes);
+            return callback(
+                new Error("Not allowed by CORS")
+            );
+        },
 
-// =====================================
-// Courses
-// =====================================
-app.use("/api/courses", courseRoutes);
+        credentials: true,
+    })
+);
 
-// =====================================
-// Lessons
-// =====================================
-app.use("/api/lessons", lessonRoutes);
+// ======================================
+// JSON
+// ======================================
 
-// =====================================
-// Upload
-// =====================================
-app.use("/api/upload", uploadRoutes);
+app.use(
+    express.json()
+);
 
-// =====================================
-// Enrollments
-// =====================================
-app.use("/api/enrollments", enrollmentRoutes);
+// ======================================
+// URL ENCODED
+// ======================================
 
-// =====================================
-// Profile
-// =====================================
-app.use("/api/profile", profileRoutes);
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+);
 
-// =====================================
-// Settings
-// =====================================
-app.use("/api/settings", settingsRoutes);
+// ======================================
+// STATIC UPLOADS
+// ======================================
 
-// =====================================
-// Quiz
-// =====================================
-app.use("/api/quizzes", quizRoutes);
+app.use(
+    "/uploads",
+    express.static("uploads")
+);
 
-// =====================================
-// Student Dashboard
-// =====================================
-app.use("/api/dashboard", dashboardRoutes);
+// ======================================
+// HEALTH CHECK
+// ======================================
 
-// =====================================
-// Admin
-// =====================================
-app.use("/api/admin", adminRoutes);
+app.get(
+    "/",
+    (req, res) => {
 
-// =====================================
-// Admin Course CRUD
-// =====================================
-app.use("/api/admin", adminCourseRoutes);
+        res.status(200).json({
 
-console.log("✅ Admin Routes Loaded");
+            success: true,
 
-// =====================================
-// Protected Route Test
-// =====================================
-app.get("/dashboard", verifyToken, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome to DataWave Dashboard",
-    user: req.user,
-  });
-});
+            message:
+                "SkillNova LMS Backend Running Successfully 🚀",
 
-// =====================================
-// Health Check
-// =====================================
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    status: "Server Running",
-  });
-});
+            status: "Online",
 
-// =====================================
-// 404 Handler
-// =====================================
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route Not Found",
-  });
-});
+        });
 
-// =====================================
-// Global Error Handler
-// =====================================
-app.use((err, req, res, next) => {
-  console.error(err);
+    }
+);
 
-  res.status(500).json({
-    success: false,
-    message: "Internal Server Error",
-    error: err.message,
-  });
-});
+// ======================================
+// API ROUTES
+// ======================================
 
-// =====================================
-// Start Server
-// =====================================
-const PORT = process.env.PORT || 5000;
+// ======================================
+// AUTHENTICATION
+// ======================================
 
-app.listen(PORT, () => {
-  console.log("========================================");
-  console.log("🚀 DataWave LMS Backend Started");
-  console.log(`🌐 Server Running : http://localhost:${PORT}`);
-  console.log("✅ Database Connected");
-  console.log("✅ Admin Routes Loaded");
-  console.log("========================================");
-});
+app.use(
+    "/api/auth",
+    authRoutes
+);
+
+// ======================================
+// PROFILE
+// ======================================
+
+app.use(
+    "/api/profile",
+    profileRoutes
+);
+
+// ======================================
+// COURSES
+// ======================================
+
+app.use(
+    "/api/courses",
+    courseRoutes
+);
+
+// ======================================
+// LESSONS
+// ======================================
+
+app.use(
+    "/api/admin/lessons",
+    lessonRoutes
+);
+
+// ======================================
+// STUDENT LESSONS
+// ======================================
+
+app.use(
+    "/api/student/lessons",
+    studentLessonRoutes
+);
+
+// ======================================
+// ENROLLMENTS
+// ======================================
+
+app.use(
+    "/api/enrollments",
+    enrollmentRoutes
+);
+
+// ======================================
+// LESSON PROGRESS
+// ======================================
+
+app.use(
+    "/api/progress",
+    progressRoutes
+);
+
+// ======================================
+// VIDEO PROGRESS
+// ======================================
+
+app.use(
+    "/api/video-progress",
+    videoProgressRoutes
+);
+
+// ======================================
+// ADMIN ASSIGNMENTS
+// ======================================
+
+app.use(
+    "/api/admin/assignments",
+    assignmentRoutes
+);
+
+// ======================================
+// ADMIN SUBMISSIONS
+// ======================================
+
+app.use(
+    "/api/admin/submissions",
+    assignmentSubmissionRoutes
+);
+
+// ======================================
+// STUDENT ASSIGNMENTS
+// ======================================
+
+app.use(
+    "/api/student/assignments",
+    studentAssignmentRoutes
+);
+
+// ======================================
+// STUDENT SUBMISSIONS
+// ======================================
+
+app.use(
+    "/api/student/submissions",
+    studentSubmissionRoutes
+);
+
+// ======================================
+// STUDENT QUIZZES
+// ======================================
+
+app.use(
+    "/api/student/quizzes",
+    studentQuizRoutes
+);
+
+// ======================================
+// CERTIFICATES
+// ======================================
+
+app.use(
+    "/api/certificates",
+    certificateRoutes
+);
+
+// ======================================
+// STUDENT DASHBOARD
+// ======================================
+
+app.use(
+    "/api/student/dashboard",
+    studentDashboardRoutes
+);
+
+// ======================================
+// ZOOM WEBHOOK
+// ======================================
+
+app.use(
+    "/api/zoom/webhook",
+    zoomWebhookRoutes
+);
+
+// ======================================
+// LIVE CLASSES
+// ======================================
+
+app.use(
+    "/api/live-classes",
+    liveClassRoutes
+);
+
+// ======================================
+// SUPPORT
+// ======================================
+
+app.use(
+    "/api/support",
+    supportRoutes
+);
+
+// ======================================
+// ADMIN CORE ROUTES
+// ======================================
+
+app.use(
+    "/api/admin",
+    adminRoutes
+);
+
+// ======================================
+// ADMIN STUDENT MANAGEMENT
+// ======================================
+
+app.use(
+    "/api/admin",
+    adminStudentRoutes
+);
+
+// ======================================
+// ADMIN COURSE MANAGEMENT
+// ======================================
+
+app.use(
+    "/api/admin",
+    adminCourseRoutes
+);
+
+// ======================================
+// ADMIN DASHBOARD
+// ======================================
+
+app.use(
+    "/api/admin",
+    dashboardRoutes
+);
+
+// ======================================
+// ADMIN ANALYTICS
+// ======================================
+
+app.use(
+    "/api/admin/analytics",
+    analyticsRoutes
+);
+
+// ======================================
+// ADMIN REPORTS
+// ======================================
+
+app.use(
+    "/api/admin/reports",
+    adminReportsRoutes
+);
+
+// ======================================
+// BATCHES
+// ======================================
+
+app.use(
+    "/api/batches",
+    batchRoutes
+);
+
+// ======================================
+// ADMIN MENTORS
+// ======================================
+
+app.use(
+    "/api/admin",
+    mentorRoutes
+);
+
+// ======================================
+// SETTINGS
+// ======================================
+
+app.use(
+    "/api/settings",
+    settingsRoutes
+);
+
+// ======================================
+// NOTIFICATIONS
+// ======================================
+
+app.use(
+    "/api/notifications",
+    notificationRoutes
+);
+
+// ======================================
+// FILE UPLOADS
+// ======================================
+
+app.use(
+    "/api/upload",
+    uploadRoutes
+);
+
+// ======================================
+// 404 HANDLER
+// ======================================
+
+app.use(
+    (req, res) => {
+
+        res.status(404).json({
+
+            success: false,
+
+            message:
+                `Route not found: ${req.method} ${req.originalUrl}`,
+
+        });
+
+    }
+);
+
+// ======================================
+// GLOBAL ERROR HANDLER
+// ======================================
+
+app.use(
+    (err, req, res, next) => {
+
+        console.error(
+            "GLOBAL ERROR:",
+            err
+        );
+
+        res.status(
+            err.status || 500
+        ).json({
+
+            success: false,
+
+            message:
+                err.message ||
+                "Internal Server Error",
+
+        });
+
+    }
+);
+
+// ======================================
+// START SERVER
+// ======================================
+
+app.listen(
+    PORT,
+    "0.0.0.0",
+    () => {
+
+        console.log("");
+        console.log("======================================");
+        console.log("🚀 SkillNova LMS Backend");
+        console.log("======================================");
+
+        console.log(
+            `🌐 Server: http://localhost:${PORT}`
+        );
+
+        console.log(
+            `👨‍🎓 Students: http://localhost:${PORT}/api/admin/students`
+        );
+
+        console.log(
+            `👨‍🏫 Mentors: http://localhost:${PORT}/api/admin/mentors`
+        );
+
+        console.log(
+            `📚 Admin Courses: http://localhost:${PORT}/api/admin/courses`
+        );
+
+        console.log(
+            `📦 Batches: http://localhost:${PORT}/api/batches`
+        );
+
+        console.log(
+            `📊 Analytics: http://localhost:${PORT}/api/admin/analytics`
+        );
+
+        console.log(
+            `📑 Reports: http://localhost:${PORT}/api/admin/reports`
+        );
+
+        console.log(
+            `⚙️ Settings: http://localhost:${PORT}/api/settings`
+        );
+
+        console.log(
+            `🔔 Notifications: http://localhost:${PORT}/api/notifications`
+        );
+
+        console.log(
+            `📤 Uploads: http://localhost:${PORT}/api/upload`
+        );
+
+        console.log(
+            `🖼️ Static Files: http://localhost:${PORT}/uploads`
+        );
+
+        console.log("======================================");
+        console.log("");
+
+    }
+);

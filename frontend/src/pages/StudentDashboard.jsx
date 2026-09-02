@@ -1,82 +1,96 @@
-import Sidebar from "../components/dashboard/Sidebar";
-import Topbar from "../components/dashboard/Topbar";
 import StatsCards from "../components/dashboard/StatsCards";
 import ContinueLearning from "../components/dashboard/ContinueLearning";
-import LearningChart from "../components/dashboard/LearningChart";
-import CourseAnalytics from "../components/dashboard/CourseAnalytics";
-import RecentCourses from "../components/dashboard/RecentCourses";
+import MyCourses from "../components/dashboard/MyCourses";
+import ProgressChart from "../components/dashboard/ProgressChart";
+import UpcomingClasses from "../components/dashboard/UpcomingClasses";
 import Activity from "../components/dashboard/Activity";
-import AchievementCard from "../components/dashboard/AchievementCard";
-import ProfileCard from "../components/dashboard/ProfileCard";
+import Assignments from "../components/dashboard/Assignments";
 
 function StudentDashboard() {
-  return (
-    <div className="flex bg-slate-100 min-h-screen">
 
-      {/* Sidebar */}
+    return (
 
-      <Sidebar />
+        <div className="
+            w-full
+            max-w-[1700px]
+            mx-auto
+            px-4
+            sm:px-6
+            lg:px-8
+            xl:px-10
+            py-5
+            sm:py-6
+            lg:py-8
+        ">
 
-      {/* Main Content */}
+            <section>
+                <StatsCards />
+            </section>
 
-      <main className="flex-1 p-8 overflow-y-auto">
+            <section className="mt-6">
+                <ContinueLearning />
+            </section>
 
-        <div className="space-y-8">
+            <section className="mt-7">
+                <MyCourses />
+            </section>
 
-          {/* Topbar */}
+            <section className="
+                mt-7
+                grid
+                grid-cols-1
+                xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.8fr)]
+                gap-6
+                items-stretch
+            ">
 
-          <Topbar />
+                <div className="
+                    min-w-0
+                    h-full
+                ">
+                    <ProgressChart />
+                </div>
 
-          {/* Stats */}
+                <div className="
+                    min-w-0
+                    h-full
+                ">
+                    <UpcomingClasses />
+                </div>
 
-          <StatsCards />
+            </section>
 
-          {/* Continue Learning */}
+            <section className="
+                mt-6
+                grid
+                grid-cols-1
+                xl:grid-cols-2
+                gap-6
+                items-stretch
+            ">
 
-          <ContinueLearning />
+                <div className="
+                    min-w-0
+                    h-full
+                ">
+                    <Assignments />
+                </div>
 
-          {/* Charts */}
+                <div className="
+                    min-w-0
+                    h-full
+                ">
+                    <Activity />
+                </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+            </section>
 
-            <LearningChart />
-
-            <CourseAnalytics />
-
-          </div>
-
-          {/* Bottom Section */}
-
-          <div className="grid lg:grid-cols-3 gap-8">
-
-            {/* Left */}
-
-            <div className="lg:col-span-2 space-y-8">
-
-              <RecentCourses />
-
-              <AchievementCard />
-
-            </div>
-
-            {/* Right */}
-
-            <div className="space-y-8">
-
-              <ProfileCard />
-
-              <Activity />
-
-            </div>
-
-          </div>
+            <div className="h-6" />
 
         </div>
 
-      </main>
+    );
 
-    </div>
-  );
 }
 
 export default StudentDashboard;

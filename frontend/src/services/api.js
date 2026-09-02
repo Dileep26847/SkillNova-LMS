@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://skillnova-lms-production.up.railway.app/api",
+  baseURL: "http://localhost:5000/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -10,6 +10,7 @@ const api = axios.create({
 // ======================================
 // Attach JWT Token Automatically
 // ======================================
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

@@ -1,16 +1,18 @@
 import api from "./api";
 
-// ===============================
-// Change Password
-// ===============================
-export const changePassword = async (
-  userId,
-  passwordData
-) => {
-  const response = await api.put(
-    `/settings/change-password/${userId}`,
-    passwordData
-  );
+// ======================================
+// CHANGE PASSWORD
+// ======================================
 
-  return response.data;
+export const changePassword = async (
+    passwordData
+) => {
+
+    const response = await api.put(
+        "/settings/change-password",
+        passwordData
+    );
+
+    return response.data;
+
 };

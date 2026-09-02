@@ -1,28 +1,64 @@
 import api from "./api";
 
-// ===============================
-// Get All Courses
-// ===============================
+
+// ============================================================
+// GET PUBLIC COURSE CATALOGUE
+// ============================================================
+//
+// No login required.
+//
+// GET /api/courses
+// ============================================================
+
 export const getAllCourses = async () => {
-  const response = await api.get("/courses");
+
+  const response =
+    await api.get("/courses");
+
   return response.data;
+
 };
 
-// ===============================
-// Get Course By ID
-// ===============================
+
+// ============================================================
+// GET COURSE BY ID
+// ============================================================
+
 export const getCourseById = async (id) => {
-  const response = await api.get(`/courses/${id}`);
+
+  const response =
+    await api.get(
+      `/courses/${id}`
+    );
+
   return response.data;
+
 };
 
-// ===============================
-// Search Courses
-// ===============================
-export const searchCourses = async (keyword) => {
-  const response = await api.get(
-    `/courses/search?q=${keyword}`
-  );
+
+// ============================================================
+// SEARCH COURSES
+// ============================================================
+//
+// No login required.
+//
+// GET /api/courses/search?q=keyword
+// ============================================================
+
+export const searchCourses = async (
+  keyword
+) => {
+
+  const response =
+    await api.get(
+      "/courses/search",
+      {
+        params: {
+          q: keyword,
+        },
+      }
+    );
 
   return response.data;
+
 };

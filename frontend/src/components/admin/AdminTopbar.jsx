@@ -1,86 +1,215 @@
-import {
-  FaBell,
-  FaSearch,
-  FaUserCircle,
-} from "react-icons/fa";
+import SearchBar from "../common/SearchBar";
+import Button from "../common/Button";
+import NotificationBell from "../NotificationBell";
+
+
+// ==========================================
+// ADMIN TOPBAR
+// ==========================================
 
 function AdminTopbar() {
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  // ==========================================
+  // CURRENT USER
+  // ==========================================
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+
+  // ==========================================
+  // CURRENT DATE
+  // ==========================================
+
+  const today =
+    new Date().toLocaleDateString(
+      "en-US",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }
+    );
+
+
+  // ==========================================
+  // RENDER
+  // ==========================================
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg px-8 py-5 flex justify-between items-center">
 
-      {/* Left */}
+    <div
+      className="
+        bg-white
+        rounded-3xl
+        shadow-lg
+        border
+        border-slate-100
+        p-6
+        relative
+        z-50
+      "
+    >
 
-      <div>
+      <div
+        className="
+          flex
+          flex-col
+          xl:flex-row
+          justify-between
+          gap-6
+          items-center
+        "
+      >
 
-        <h1 className="text-3xl font-bold">
-          Admin Dashboard
-        </h1>
+        {/* ======================================
+            LEFT SECTION
+        ====================================== */}
 
-        <p className="text-gray-500 mt-1">
-          Welcome back, {user?.full_name || "Admin"}
-        </p>
+        <div>
 
-      </div>
+          <h1
+            className="
+              text-4xl
+              font-black
+              text-slate-800
+            "
+          >
 
-      {/* Right */}
+            Welcome Back 👋
 
-      <div className="flex items-center gap-6">
+          </h1>
 
-        {/* Search */}
 
-        <div className="relative hidden lg:block">
+          <p
+            className="
+              text-slate-500
+              mt-2
+            "
+          >
 
-          <FaSearch className="absolute left-4 top-4 text-gray-400" />
+            {user?.full_name || "Administrator"}
 
-          <input
-            type="text"
-            placeholder="Search..."
-            className="border rounded-xl py-3 pl-12 pr-4 w-72 outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          </p>
+
+
+          <p
+            className="
+              text-slate-400
+              text-sm
+              mt-1
+            "
+          >
+
+            {today}
+
+          </p>
 
         </div>
 
-        {/* Notification */}
 
-        <button className="relative bg-slate-100 hover:bg-slate-200 p-4 rounded-xl transition">
+        {/* ======================================
+            RIGHT SECTION
+        ====================================== */}
 
-          <FaBell size={20} />
+        <div
+          className="
+            flex
+            items-center
+            gap-4
+            w-full
+            xl:w-auto
+            relative
+          "
+        >
 
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            3
-          </span>
+          {/* ====================================
+              SEARCH
+          ==================================== */}
 
-        </button>
+          <div
+            className="
+              w-80
+              hidden
+              lg:block
+            "
+          >
 
-        {/* Profile */}
-
-        <div className="flex items-center gap-3">
-
-          <FaUserCircle
-            size={42}
-            className="text-blue-600"
-          />
-
-          <div className="hidden md:block">
-
-            <h3 className="font-bold">
-              {user?.full_name || "Admin"}
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Administrator
-            </p>
+            <SearchBar
+              value=""
+              onChange={() => {}}
+              placeholder="Search..."
+            />
 
           </div>
+
+
+          {/* ====================================
+              NOTIFICATION
+          ==================================== */}
+
+          <div
+            className="
+              relative
+              shrink-0
+            "
+            style={{
+              zIndex: 999999,
+            }}
+          >
+
+            <NotificationBell />
+
+          </div>
+
+
+          {/* ====================================
+              NEW COURSE
+          ==================================== */}
+
+          <Button
+            size="sm"
+          >
+
+            + New Course
+
+          </Button>
+
+
+          {/* ====================================
+              ADMIN PROFILE
+          ==================================== */}
+
+          <img
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+              user?.full_name || "Admin"
+            )}&background=0891b2&color=fff&size=128`}
+            alt="Admin"
+            className="
+              w-14
+              h-14
+              rounded-full
+              border-4
+              border-cyan-100
+              shrink-0
+            "
+          />
 
         </div>
 
       </div>
 
     </div>
+
   );
+
 }
+
+
+// ==========================================
+// EXPORT
+// ==========================================
 
 export default AdminTopbar;

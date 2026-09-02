@@ -3,11 +3,14 @@ const db = require("../database/db");
 // ==========================================
 // Get All Courses
 // ==========================================
+
 const getAllCourses = (callback) => {
+
   const sql = `
     SELECT
       id,
       title,
+      description,
       instructor,
       category,
       price,
@@ -18,12 +21,48 @@ const getAllCourses = (callback) => {
   `;
 
   db.query(sql, callback);
+
 };
+
+
+// ==========================================
+// Get Course By ID
+// ==========================================
+
+const getCourseById = (id, callback) => {
+
+  const sql = `
+    SELECT
+      id,
+      title,
+      description,
+      instructor,
+      category,
+      price,
+      thumbnail,
+      created_at
+    FROM courses
+    WHERE id = ?
+  `;
+
+  db.query(
+    sql,
+    [id],
+    callback
+  );
+
+};
+
 
 // ==========================================
 // Add Course
 // ==========================================
-const addCourse = (course, callback) => {
+
+const addCourse = (
+  course,
+  callback
+) => {
+
   const sql = `
     INSERT INTO courses
     (
@@ -45,26 +84,34 @@ const addCourse = (course, callback) => {
       course.instructor,
       course.category,
       course.price,
-      course.thumbnail,
+      course.thumbnail || null,
     ],
     callback
   );
+
 };
+
 
 // ==========================================
 // Update Course
 // ==========================================
-const updateCourse = (id, course, callback) => {
+
+const updateCourse = (
+  id,
+  course,
+  callback
+) => {
+
   const sql = `
     UPDATE courses
     SET
-      title=?,
-      description=?,
-      instructor=?,
-      category=?,
-      price=?,
-      thumbnail=?
-    WHERE id=?
+      title = ?,
+      description = ?,
+      instructor = ?,
+      category = ?,
+      price = ?,
+      thumbnail = ?
+    WHERE id = ?
   `;
 
   db.query(
@@ -75,42 +122,52 @@ const updateCourse = (id, course, callback) => {
       course.instructor,
       course.category,
       course.price,
-      course.thumbnail,
+      course.thumbnail || null,
       id,
     ],
     callback
   );
+
 };
+
 
 // ==========================================
 // Delete Course
 // ==========================================
-const deleteCourse = (id, callback) => {
+
+const deleteCourse = (
+  id,
+  callback
+) => {
+
   const sql = `
     DELETE FROM courses
-    WHERE id=?
+    WHERE id = ?
   `;
 
-  db.query(sql, [id], callback);
+  db.query(
+    sql,
+    [id],
+    callback
+  );
+
 };
 
-// ==========================================
-// Get Course By ID
-// ==========================================
-const getCourseById = (id, callback) => {
-  const sql = `
-    SELECT *
-    FROM courses
-    WHERE id=?
-  `;
 
-  db.query(sql, [id], callback);
-};
+// ==========================================
+// Export
+// ==========================================
 
 module.exports = {
+
   getAllCourses,
-  addCourse,
-  updateCourse,
-  deleteCourse,
+
   getCourseById,
+
+  addCourse,
+
+  updateCourse,
+
+  deleteCourse,
+
 };

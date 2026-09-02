@@ -20,11 +20,11 @@ function Footer() {
           <div>
 
             <h2 className="text-4xl font-bold text-blue-500">
-              SkillNova
+              Data Lattice
             </h2>
 
             <p className="mt-5 text-gray-400 leading-7">
-              SkillNova is a modern Learning Management System helping students
+              Data Lattice is a modern Learning Management System helping students
               master industry-ready skills through high-quality online courses.
             </p>
 
@@ -158,7 +158,7 @@ function Footer() {
         <div className="border-t border-slate-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center">
 
           <p className="text-gray-500">
-            © 2026 SkillNova LMS. All Rights Reserved.
+            © 2026 Data Lattice LMS. All Rights Reserved.
           </p>
 
           <p className="text-gray-500 mt-4 md:mt-0">

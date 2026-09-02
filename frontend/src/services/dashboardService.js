@@ -1,19 +1,41 @@
-import api from "./api";
+import axios from "axios";
+import API_BASE_URL from "../config/api";
 
-// Dashboard Statistics
-export const getDashboardStats = async (userId) => {
-  const response = await api.get(
-    `/dashboard/stats/${userId}`
+const API = `${API_BASE_URL}/admin/dashboard`;
+
+const getToken = () => localStorage.getItem("token");
+
+const authConfig = () => ({
+  headers: {
+    Authorization: `Bearer ${getToken()}`,
+  },
+});
+
+// ===============================
+// Admin Dashboard
+// ===============================
+export const getDashboard = async () => {
+  const response = await axios.get(
+    API,
+    authConfig()
   );
 
   return response.data;
 };
 
-// Recent Courses
-export const getRecentCourses = async (userId) => {
-  const response = await api.get(
-    `/dashboard/recent-courses/${userId}`
+// ===============================
+// Student Dashboard
+// ===============================
+export const getDashboardStats = async (studentId) => {
+
+  const response = await axios.get(
+
+    `${API_BASE_URL}/student/dashboard/${studentId}`,
+
+    authConfig()
+
   );
 
   return response.data;
+
 };

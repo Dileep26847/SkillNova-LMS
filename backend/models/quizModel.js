@@ -1,62 +1,131 @@
 const db = require("../database/db");
 
-// ===============================
-// Get Quiz By Course
-// ===============================
-const getQuizByCourse = (courseId, callback) => {
-  const sql = `
-    SELECT *
-    FROM quizzes
-    WHERE course_id = ?
-  `;
+// ======================================
+// Create Quiz
+// ======================================
 
-  db.query(sql, [courseId], callback);
+const createQuiz = (quiz, callback) => {
+
+    const sql = `
+        INSERT INTO quizzes
+        (
+            course_id,
+            title,
+            description,
+            time_limit,
+            passing_marks,
+            total_marks,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [
+            quiz.course_id,
+            quiz.title,
+            quiz.description,
+            quiz.time_limit,
+            quiz.passing_marks,
+            quiz.total_marks,
+            quiz.status
+        ],
+        callback
+    );
+
 };
 
-// ===============================
-// Get Questions
-// ===============================
-const getQuestions = (quizId, callback) => {
-  const sql = `
-    SELECT
-      id,
-      question,
-      option1,
-      option2,
-      option3,
-      option4,
-      correct_option
-    FROM questions
-    WHERE quiz_id = ?
-  `;
+// ======================================
+// Get All Quizzes
+// ======================================
 
-  db.query(sql, [quizId], callback);
+const getAllQuizzes = (callback) => {
+
+    const sql = `
+        SELECT
+            quizzes.*,
+            courses.title AS course_title
+        FROM quizzes
+        JOIN courses
+            ON courses.id = quizzes.course_id
+        ORDER BY quizzes.created_at DESC
+    `;
+
+    db.query(sql, callback);
+
 };
 
-// ===============================
-// Save Result
-// ===============================
-const saveResult = (result, callback) => {
-  const sql = `
-    INSERT INTO quiz_results
-    (user_id, quiz_id, score, total_questions)
-    VALUES (?, ?, ?, ?)
-  `;
+// ======================================
+// Get Quiz By ID
+// ======================================
 
-  db.query(
-    sql,
-    [
-      result.user_id,
-      result.quiz_id,
-      result.score,
-      result.total_questions,
-    ],
-    callback
-  );
+const getQuizById = (id, callback) => {
+
+    db.query(
+        "SELECT * FROM quizzes WHERE id=?",
+        [id],
+        callback
+    );
+
+};
+
+// ======================================
+// Update Quiz
+// ======================================
+
+const updateQuiz = (id, quiz, callback) => {
+
+    const sql = `
+        UPDATE quizzes
+        SET
+            course_id=?,
+            title=?,
+            description=?,
+            time_limit=?,
+            passing_marks=?,
+            total_marks=?,
+            status=?
+        WHERE id=?
+    `;
+
+    db.query(
+        sql,
+        [
+            quiz.course_id,
+            quiz.title,
+            quiz.description,
+            quiz.time_limit,
+            quiz.passing_marks,
+            quiz.total_marks,
+            quiz.status,
+            id
+        ],
+        callback
+    );
+
+};
+
+// ======================================
+// Delete Quiz
+// ======================================
+
+const deleteQuiz = (id, callback) => {
+
+    db.query(
+        "DELETE FROM quizzes WHERE id=?",
+        [id],
+        callback
+    );
+
 };
 
 module.exports = {
-  getQuizByCourse,
-  getQuestions,
-  saveResult,
+
+    createQuiz,
+    getAllQuizzes,
+    getQuizById,
+    updateQuiz,
+    deleteQuiz
+
 };

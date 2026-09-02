@@ -6,7 +6,7 @@ function Testimonials() {
       name: "Rahul Sharma",
       role: "Frontend Developer",
       review:
-        "SkillNova completely changed my career. The courses are practical and helped me land my first job.",
+        "Data Lattice completely changed my career. The courses are practical and helped me land my first job.",
       image: "https://randomuser.me/api/portraits/men/32.jpg",
     },
     {
@@ -35,7 +35,7 @@ function Testimonials() {
           </h2>
 
           <p className="mt-4 text-gray-500">
-            Thousands of students trust SkillNova to grow their careers.
+            Thousands of students trust Data Lattice to grow their careers.
           </p>
         </div>
 

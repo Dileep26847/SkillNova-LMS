@@ -1,24 +1,68 @@
-const db = require("../database/db");
+const db =
+    require("../database/db");
 
-// ===============================
-// Get Password By User ID
-// ===============================
-const getUserPassword = (userId, callback) => {
-  const sql = "SELECT password FROM users WHERE id = ?";
+// ======================================
+// GET USER PASSWORD
+// ======================================
 
-  db.query(sql, [userId], callback);
+const getUserPassword = (
+    userId,
+    callback
+) => {
+
+    const sql = `
+        SELECT
+            password
+        FROM users
+        WHERE id = ?
+        LIMIT 1
+    `;
+
+    db.query(
+        sql,
+        [userId],
+        callback
+    );
+
 };
 
-// ===============================
-// Update Password
-// ===============================
-const updatePassword = (userId, password, callback) => {
-  const sql = "UPDATE users SET password = ? WHERE id = ?";
 
-  db.query(sql, [password, userId], callback);
+// ======================================
+// UPDATE PASSWORD
+// ======================================
+
+const updatePassword = (
+    userId,
+    password,
+    callback
+) => {
+
+    const sql = `
+        UPDATE users
+        SET password = ?
+        WHERE id = ?
+    `;
+
+    db.query(
+        sql,
+        [
+            password,
+            userId,
+        ],
+        callback
+    );
+
 };
+
+
+// ======================================
+// EXPORTS
+// ======================================
 
 module.exports = {
-  getUserPassword,
-  updatePassword,
+
+    getUserPassword,
+
+    updatePassword,
+
 };

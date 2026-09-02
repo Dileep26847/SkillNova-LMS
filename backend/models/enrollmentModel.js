@@ -1,13 +1,47 @@
 const db = require("../database/db");
 
 // ============================
+// Check Enrollment
+// ============================
+
+const checkEnrollment = (
+    userId,
+    courseId,
+    callback
+) => {
+
+    db.query(
+        `
+        SELECT id
+        FROM enrollments
+        WHERE user_id = ?
+          AND course_id = ?
+        `,
+        [
+            userId,
+            courseId
+        ],
+        callback
+    );
+
+};
+
+
+// ============================
 // Enroll Student
 // ============================
-const enrollStudent = (enrollment, callback) => {
+
+const enrollStudent = (
+    enrollment,
+    callback
+) => {
 
     const sql = `
         INSERT INTO enrollments
-        (user_id, course_id)
+        (
+            user_id,
+            course_id
+        )
         VALUES (?, ?)
     `;
 
@@ -22,10 +56,15 @@ const enrollStudent = (enrollment, callback) => {
 
 };
 
+
 // ============================
 // Get Courses By User
 // ============================
-const getUserEnrollments = (userId, callback) => {
+
+const getUserEnrollments = (
+    userId,
+    callback
+) => {
 
     const sql = `
         SELECT
@@ -38,29 +77,85 @@ const getUserEnrollments = (userId, callback) => {
             enrollments.enrolled_at
         FROM enrollments
         JOIN courses
-        ON enrollments.course_id = courses.id
+            ON enrollments.course_id = courses.id
         WHERE enrollments.user_id = ?
+        ORDER BY enrollments.enrolled_at DESC
     `;
 
-    db.query(sql, [userId], callback);
-
-};
-
-// ============================
-// Delete Enrollment
-// ============================
-const deleteEnrollment = (id, callback) => {
-
     db.query(
-        "DELETE FROM enrollments WHERE id=?",
-        [id],
+        sql,
+        [
+            userId
+        ],
         callback
     );
 
 };
 
+
+// ============================
+// Delete Enrollment
+// ============================
+// Admin use.
+// ============================
+
+const deleteEnrollment = (
+    id,
+    callback
+) => {
+
+    db.query(
+        `
+        DELETE FROM enrollments
+        WHERE id = ?
+        `,
+        [
+            id
+        ],
+        callback
+    );
+
+};
+
+
+// ============================
+// Delete Enrollment By User ID
+// ============================
+// Student ownership use.
+// ============================
+
+const deleteEnrollmentByUserId = (
+    enrollmentId,
+    userId,
+    callback
+) => {
+
+    db.query(
+        `
+        DELETE FROM enrollments
+        WHERE id = ?
+          AND user_id = ?
+        `,
+        [
+            enrollmentId,
+            userId
+        ],
+        callback
+    );
+
+};
+
+
 module.exports = {
+
+    checkEnrollment,
+
     enrollStudent,
+
     getUserEnrollments,
-    deleteEnrollment
+
+    deleteEnrollment,
+
+    deleteEnrollmentByUserId
+
 };

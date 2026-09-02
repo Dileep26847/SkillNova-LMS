@@ -1,20 +1,22 @@
 const express = require("express");
 const router = express.Router();
 
-const adminController = require("../controllers/adminController");
 const verifyToken = require("../middleware/authMiddleware");
 
+const adminController = require("../controllers/adminController");
+const adminDashboardController = require("../controllers/adminDashboardController");
+
 // ==========================================
-// Dashboard Statistics
+// New Admin Dashboard
 // ==========================================
 router.get(
   "/dashboard",
   verifyToken,
-  adminController.getDashboardStats
+  adminDashboardController.getDashboard
 );
 
 // ==========================================
-// Get All Students
+// Students
 // ==========================================
 router.get(
   "/students",
@@ -22,9 +24,6 @@ router.get(
   adminController.getAllStudents
 );
 
-// ==========================================
-// Delete Student
-// ==========================================
 router.delete(
   "/students/:id",
   verifyToken,

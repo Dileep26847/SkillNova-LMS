@@ -1,47 +1,55 @@
 const dashboardModel = require("../models/dashboardModel");
 
-// ==========================================
-// Dashboard Statistics
-// ==========================================
-exports.getDashboardStats = (req, res) => {
-  const userId = req.params.userId;
+exports.getDashboard = (req, res) => {
 
-  dashboardModel.getDashboardStats(userId, (err, stats) => {
-    if (err) {
-      console.error(err);
+    dashboardModel.getDashboardStats(
 
-      return res.status(500).json({
-        success: false,
-        message: "Failed to load dashboard statistics",
-      });
-    }
+        (err, stats) => {
 
-    res.status(200).json({
-      success: true,
-      stats,
-    });
-  });
-};
+            if (err) {
 
-// ==========================================
-// Recent Courses
-// ==========================================
-exports.getRecentCourses = (req, res) => {
-  const userId = req.params.userId;
+                return res.status(500).json({
 
-  dashboardModel.getRecentCourses(userId, (err, courses) => {
-    if (err) {
-      console.error(err);
+                    success: false,
 
-      return res.status(500).json({
-        success: false,
-        message: "Failed to load recent courses",
-      });
-    }
+                    message: err.message,
 
-    res.status(200).json({
-      success: true,
-      courses,
-    });
-  });
+                });
+
+            }
+
+            dashboardModel.getRecentStudents(
+
+                (err2, students) => {
+
+                    if (err2) {
+
+                        return res.status(500).json({
+
+                            success: false,
+
+                            message: err2.message,
+
+                        });
+
+                    }
+
+                    res.json({
+
+                        success: true,
+
+                        stats: stats[0],
+
+                        recentStudents: students,
+
+                    });
+
+                }
+
+            );
+
+        }
+
+    );
+
 };

@@ -1,144 +1,727 @@
-import { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  FaSearch,
+  FaBookOpen,
+  FaArrowRight,
+} from "react-icons/fa";
+
+import {
+  motion,
+} from "framer-motion";
+
 import CourseCard from "../components/CourseCard";
+
 import {
   getAllCourses,
   searchCourses,
 } from "../services/courseService";
 
+
 function Courses() {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
+  const [courses, setCourses] =
+    useState([]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (search.trim() === "") {
-        fetchCourses();
-      } else {
-        handleSearch();
-      }
-    }, 400);
+  const [loading, setLoading] =
+    useState(true);
 
-    return () => clearTimeout(timer);
-  }, [search]);
+  const [search, setSearch] =
+    useState("");
+
+  const [searching, setSearching] =
+    useState(false);
+
+
+  // ==========================================================
+  // LOAD COURSES
+  // ==========================================================
 
   const fetchCourses = async () => {
+
     try {
-      const data = await getAllCourses();
-      setCourses(data.courses);
-    } catch (err) {
-      console.log(err);
+
+      setLoading(true);
+
+      const data =
+        await getAllCourses();
+
+      setCourses(
+        Array.isArray(data?.courses)
+          ? data.courses
+          : []
+      );
+
     }
 
-    setLoading(false);
+    catch (error) {
+
+      console.error(
+        "FETCH COURSES ERROR:",
+        error
+      );
+
+      setCourses([]);
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
   };
 
-  const handleSearch = async () => {
-    try {
-      const data = await searchCourses(search);
-      setCourses(data.courses);
-    } catch (err) {
-      console.log(err);
+
+  // ==========================================================
+  // INITIAL LOAD
+  // ==========================================================
+
+  useEffect(() => {
+
+    fetchCourses();
+
+  }, []);
+
+
+  // ==========================================================
+  // SEARCH
+  // ==========================================================
+
+  useEffect(() => {
+
+    const keyword =
+      search.trim();
+
+
+    // No search
+    if (!keyword) {
+
+      return;
+
     }
-  };
+
+
+    const timer =
+      setTimeout(
+        async () => {
+
+          try {
+
+            setSearching(true);
+
+            const data =
+              await searchCourses(
+                keyword
+              );
+
+            setCourses(
+              Array.isArray(
+                data?.courses
+              )
+                ? data.courses
+                : []
+            );
+
+          }
+
+          catch (error) {
+
+            console.error(
+              "SEARCH COURSES ERROR:",
+              error
+            );
+
+            setCourses([]);
+
+          }
+
+          finally {
+
+            setSearching(false);
+
+          }
+
+        },
+        400
+      );
+
+
+    return () =>
+      clearTimeout(timer);
+
+  }, [search]);
+
+
+  // ==========================================================
+  // HANDLE SEARCH CHANGE
+  // ==========================================================
+
+  const handleSearchChange =
+    (event) => {
+
+      const value =
+        event.target.value;
+
+      setSearch(value);
+
+
+      // Restore complete catalogue
+      // when search becomes empty.
+
+      if (!value.trim()) {
+
+        fetchCourses();
+
+      }
+
+    };
+
+
+  // ==========================================================
+  // LOADING
+  // ==========================================================
 
   if (loading) {
+
     return (
-      <div className="min-h-screen flex justify-center items-center text-3xl font-bold">
-        Loading Courses...
-      </div>
-    );
-  }
 
-  return (
-    <div className="bg-slate-100 min-h-screen">
+      <div className="
+        min-h-screen
+        bg-slate-50
+        flex
+        items-center
+        justify-center
+      ">
 
-      {/* Hero */}
+        <div className="
+          text-center
+        ">
 
-      <div className="bg-gradient-to-r from-blue-700 to-indigo-700 py-20">
+          <div className="
+            mx-auto
+            w-12
+            h-12
+            rounded-full
+            border-4
+            border-slate-200
+            border-t-indigo-600
+            animate-spin
+          " />
 
-        <div className="max-w-7xl mx-auto px-8 text-center">
+          <p className="
+            mt-5
+            text-slate-500
+            font-medium
+          ">
 
-          <h1 className="text-5xl font-bold text-white">
-            Explore Our Courses
-          </h1>
+            Loading courses...
 
-          <p className="text-blue-100 mt-5 text-lg">
-            Learn from industry experts and build your future.
           </p>
 
-          <div className="max-w-xl mx-auto mt-10 relative">
-
-            <FaSearch className="absolute left-5 top-5 text-gray-400" />
-
-            <input
-              type="text"
-              placeholder="Search by title, instructor or description..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full py-4 pl-14 pr-5 rounded-2xl shadow-xl outline-none text-lg"
-            />
-
-          </div>
-
         </div>
 
       </div>
 
-      {/* Courses */}
+    );
 
-      <div className="max-w-7xl mx-auto px-8 py-16">
+  }
 
-        <div className="flex justify-between items-center mb-10">
 
-          <h2 className="text-4xl font-bold">
-            Available Courses
-          </h2>
+  // ==========================================================
+  // UI
+  // ==========================================================
 
-          <span className="bg-blue-600 text-white px-5 py-2 rounded-full">
-            {courses.length} Courses
-          </span>
+  return (
+
+    <div className="
+      min-h-screen
+      bg-slate-50
+    ">
+
+
+      {/* ======================================================
+          HERO
+      ====================================================== */}
+
+      <section className="
+        relative
+        overflow-hidden
+        bg-slate-950
+        text-white
+      ">
+
+        {/* Glow */}
+
+        <div className="
+          absolute
+          -top-40
+          -left-40
+          w-96
+          h-96
+          rounded-full
+          bg-indigo-600/30
+          blur-3xl
+        " />
+
+        <div className="
+          absolute
+          -bottom-40
+          -right-40
+          w-96
+          h-96
+          rounded-full
+          bg-purple-600/30
+          blur-3xl
+        " />
+
+
+        <div className="
+          relative
+          max-w-7xl
+          mx-auto
+          px-6
+          lg:px-10
+          py-24
+          lg:py-28
+        ">
+
+          <motion.div
+
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+
+            transition={{
+              duration: 0.7,
+            }}
+
+            className="
+              max-w-3xl
+            "
+          >
+
+            <div className="
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              border-white/10
+              bg-white/5
+              px-4
+              py-2
+              text-sm
+              text-indigo-200
+            ">
+
+              <FaBookOpen />
+
+              Data Lattice Learning
+
+            </div>
+
+
+            <h1 className="
+              mt-7
+              text-5xl
+              lg:text-7xl
+              font-black
+              tracking-tight
+            ">
+
+              Learn skills
+              <br />
+
+              <span className="
+                bg-gradient-to-r
+                from-indigo-400
+                via-purple-400
+                to-fuchsia-400
+                bg-clip-text
+                text-transparent
+              ">
+
+                that move you forward.
+
+              </span>
+
+            </h1>
+
+
+            <p className="
+              mt-6
+              max-w-2xl
+              text-lg
+              lg:text-xl
+              leading-8
+              text-slate-300
+            ">
+
+              Explore industry-focused courses,
+              real-world projects, expert mentorship
+              and career-ready learning paths.
+
+            </p>
+
+
+            {/* SEARCH */}
+
+            <div className="
+              mt-10
+              max-w-2xl
+              relative
+            ">
+
+              <FaSearch className="
+                absolute
+                left-5
+                top-1/2
+                -translate-y-1/2
+                text-slate-400
+              " />
+
+
+              <input
+
+                type="text"
+
+                value={search}
+
+                onChange={
+                  handleSearchChange
+                }
+
+                placeholder="
+                  Search courses, skills or topics...
+                "
+
+                className="
+                  w-full
+                  rounded-2xl
+                  border
+                  border-white/10
+                  bg-white
+                  px-14
+                  py-5
+                  text-slate-900
+                  shadow-2xl
+                  outline-none
+                  transition
+                  placeholder:text-slate-400
+                  focus:ring-4
+                  focus:ring-indigo-400/20
+                "
+
+              />
+
+
+              {searching && (
+
+                <div className="
+                  absolute
+                  right-5
+                  top-1/2
+                  -translate-y-1/2
+                  w-5
+                  h-5
+                  rounded-full
+                  border-2
+                  border-slate-300
+                  border-t-indigo-600
+                  animate-spin
+                " />
+
+              )}
+
+            </div>
+
+          </motion.div>
 
         </div>
 
-        {courses.length === 0 ? (
+      </section>
 
-          <div className="bg-white rounded-3xl shadow-lg py-20 text-center">
 
-            <h2 className="text-3xl font-bold">
-              No Courses Found
+      {/* ======================================================
+          COURSE SECTION
+      ====================================================== */}
+
+      <section className="
+        max-w-7xl
+        mx-auto
+        px-6
+        lg:px-10
+        py-20
+      ">
+
+
+        {/* HEADER */}
+
+        <div className="
+          flex
+          flex-col
+          sm:flex-row
+          sm:items-end
+          sm:justify-between
+          gap-5
+          mb-10
+        ">
+
+          <div>
+
+            <p className="
+              text-sm
+              font-bold
+              uppercase
+              tracking-widest
+              text-indigo-600
+            ">
+
+              Explore
+
+            </p>
+
+            <h2 className="
+              mt-2
+              text-4xl
+              lg:text-5xl
+              font-black
+              tracking-tight
+              text-slate-950
+            ">
+
+              Our Courses
+
             </h2>
 
-            <p className="text-gray-500 mt-4">
-              Try another keyword.
+            <p className="
+              mt-3
+              text-slate-500
+            ">
+
+              Choose a learning path and
+              start building your future.
+
             </p>
 
           </div>
 
-        ) : (
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-10">
+          <div className="
+            inline-flex
+            items-center
+            gap-2
+            self-start
+            rounded-full
+            bg-indigo-50
+            px-5
+            py-3
+            font-bold
+            text-indigo-700
+          ">
 
-            {courses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-              />
-            ))}
+            {courses.length}
+
+            <span className="
+              font-medium
+            ">
+
+              Courses
+
+            </span>
 
           </div>
 
+        </div>
+
+
+        {/* ====================================================
+            NO COURSES
+        ==================================================== */}
+
+        {courses.length === 0 ? (
+
+          <motion.div
+
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+
+            className="
+              rounded-3xl
+              border
+              border-slate-200
+              bg-white
+              px-6
+              py-24
+              text-center
+              shadow-sm
+            "
+          >
+
+            <div className="
+              mx-auto
+              flex
+              h-16
+              w-16
+              items-center
+              justify-center
+              rounded-2xl
+              bg-slate-100
+              text-slate-400
+            ">
+
+              <FaBookOpen size={25} />
+
+            </div>
+
+
+            <h3 className="
+              mt-6
+              text-2xl
+              font-bold
+              text-slate-900
+            ">
+
+              {search
+                ? "No matching courses"
+                : "No courses available"
+              }
+
+            </h3>
+
+
+            <p className="
+              mt-3
+              text-slate-500
+            ">
+
+              {search
+                ? "Try searching for another skill or topic."
+                : "Courses will appear here once they are published."
+              }
+
+            </p>
+
+
+            {search && (
+
+              <button
+
+                onClick={() => {
+                  setSearch("");
+                  fetchCourses();
+                }}
+
+                className="
+                  mt-6
+                  inline-flex
+                  items-center
+                  gap-2
+                  font-semibold
+                  text-indigo-600
+                  hover:text-indigo-700
+                "
+              >
+
+                Clear Search
+
+                <FaArrowRight />
+
+              </button>
+
+            )}
+
+          </motion.div>
+
+        ) : (
+
+          /* ==================================================
+             COURSE GRID
+          ================================================== */
+
+          <motion.div
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.5,
+            }}
+            className="
+              grid
+              gap-7
+              md:grid-cols-2
+              xl:grid-cols-3
+            "
+          >
+
+            {courses.map(
+              (course, index) => (
+
+                <motion.div
+
+                  key={course.id}
+
+                  initial={{
+                    opacity: 0,
+                    y: 25,
+                  }}
+
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+
+                  transition={{
+                    duration: 0.45,
+                    delay:
+                      Math.min(
+                        index * 0.05,
+                        0.3
+                      ),
+                  }}
+                >
+
+                  <CourseCard
+                    course={course}
+                  />
+
+                </motion.div>
+
+              )
+            )}
+
+          </motion.div>
+
         )}
 
-      </div>
+      </section>
 
     </div>
+
   );
+
 }
+
 
 export default Courses;

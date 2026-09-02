@@ -1,25 +1,33 @@
-import api from "./api";
+import axios from "axios";
 
-// ==========================================
-// Dashboard Statistics
-// ==========================================
-export const getDashboardStats = async () => {
-  const response = await api.get("/admin/dashboard");
-  return response.data;
-};
+import API_BASE_URL from "../config/api";
 
-// ==========================================
-// Get All Students
-// ==========================================
-export const getAllStudents = async () => {
-  const response = await api.get("/admin/students");
-  return response.data;
-};
+const API = `${API_BASE_URL}/admin`;
 
-// ==========================================
-// Delete Student
-// ==========================================
-export const deleteStudent = async (id) => {
-  const response = await api.delete(`/admin/students/${id}`);
-  return response.data;
+const token = () => localStorage.getItem("token");
+
+// ======================================
+// Dashboard
+// ======================================
+
+export const getDashboard = async () => {
+
+    const response = await axios.get(
+
+        `${API}/dashboard`,
+
+        {
+
+            headers: {
+
+                Authorization: `Bearer ${token()}`
+
+            }
+
+        }
+
+    );
+
+    return response.data;
+
 };

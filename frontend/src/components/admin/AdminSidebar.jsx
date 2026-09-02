@@ -1,114 +1,318 @@
 import {
-  FaTachometerAlt,
-  FaUsers,
+  FaHome,
+  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaBookOpen,
   FaBook,
+  FaLayerGroup,
+  FaClipboardList,
   FaVideo,
+  FaCertificate,
+  FaHeadset,
+  FaChartBar,
+  FaCog,
   FaSignOutAlt,
-  FaGraduationCap,
 } from "react-icons/fa";
-import { NavLink, useNavigate } from "react-router-dom";
+
+import {
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
+
+
+// ==========================================
+// ADMIN MENU
+// ==========================================
+
+const menuItems = [
+
+  {
+    name: "Dashboard",
+    icon: <FaHome />,
+    path: "/admin/dashboard",
+  },
+
+  {
+    name: "Students",
+    icon: <FaUserGraduate />,
+    path: "/admin/students",
+  },
+
+  {
+    name: "Mentors",
+    icon: <FaChalkboardTeacher />,
+    path: "/admin/mentors",
+  },
+
+  {
+    name: "Courses",
+    icon: <FaBookOpen />,
+    path: "/admin/courses",
+  },
+
+  {
+    name: "Lessons",
+    icon: <FaBook />,
+    path: "/admin/lessons",
+  },
+
+  {
+    name: "Batches",
+    icon: <FaLayerGroup />,
+    path: "/admin/batches",
+  },
+
+  {
+    name: "Assignments",
+    icon: <FaClipboardList />,
+    path: "/admin/assignments",
+  },
+
+  {
+    name: "Live Classes",
+    icon: <FaVideo />,
+    path: "/admin/live-classes",
+  },
+
+  {
+    name: "Certificates",
+    icon: <FaCertificate />,
+    path: "/admin/certificates",
+  },
+
+  {
+    name: "Support",
+    icon: <FaHeadset />,
+    path: "/admin/support",
+  },
+
+  {
+    name: "Analytics",
+    icon: <FaChartBar />,
+    path: "/admin/analytics",
+  },
+
+  {
+    name: "Reports",
+    icon: <FaChartBar />,
+    path: "/admin/reports",
+  },
+
+  {
+    name: "Settings",
+    icon: <FaCog />,
+    path: "/admin/settings",
+  },
+
+];
+
+
+// ==========================================
+// ADMIN SIDEBAR
+// ==========================================
 
 function AdminSidebar() {
+
   const navigate = useNavigate();
 
-  const logout = () => {
+
+  // ==========================================
+  // LOGOUT
+  // ==========================================
+
+  const handleLogout = () => {
+
     localStorage.removeItem("token");
+
     localStorage.removeItem("user");
+
     navigate("/login");
+
   };
 
-  const menuClass = ({ isActive }) =>
-    `flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 ${
-      isActive
-        ? "bg-blue-600 text-white shadow-lg"
-        : "text-gray-700 hover:bg-blue-100"
-    }`;
+
+  // ==========================================
+  // RENDER
+  // ==========================================
 
   return (
-    <aside className="w-72 bg-white shadow-xl min-h-screen flex flex-col">
 
-      {/* Logo */}
+    <aside
+      className="
+        w-72
+        min-h-screen
+        bg-slate-900
+        text-white
+        flex
+        flex-col
+        shadow-2xl
+        shrink-0
+      "
+    >
 
-      <div className="p-8 border-b">
+      {/* ======================================
+          LOGO
+      ====================================== */}
 
-        <div className="flex items-center gap-3">
+      <div
+        className="
+          px-8
+          py-8
+          border-b
+          border-slate-800
+        "
+      >
 
-          <div className="bg-blue-600 text-white p-3 rounded-xl">
+        <h1
+          className="
+            text-3xl
+            font-extrabold
+            tracking-wide
+            text-cyan-400
+          "
+        >
+          Data Lattice
+        </h1>
 
-            <FaGraduationCap size={22} />
 
-          </div>
-
-          <div>
-
-            <h1 className="text-2xl font-bold text-blue-600">
-              SkillNova
-            </h1>
-
-            <p className="text-sm text-gray-500">
-              Admin Panel
-            </p>
-
-          </div>
-
-        </div>
+        <p
+          className="
+            text-sm
+            text-slate-400
+            mt-1
+          "
+        >
+          Learning Management System
+        </p>
 
       </div>
 
-      {/* Navigation */}
 
-      <nav className="flex-1 p-6 space-y-3">
+      {/* ======================================
+          NAVIGATION
+      ====================================== */}
 
-        <NavLink
-          to="/admin-dashboard"
-          className={menuClass}
-        >
-          <FaTachometerAlt />
-          Dashboard
-        </NavLink>
+      <nav
+        className="
+          flex-1
+          mt-6
+          px-4
+          overflow-y-auto
+        "
+      >
 
-        <NavLink
-          to="/manage-students"
-          className={menuClass}
-        >
-          <FaUsers />
-          Students
-        </NavLink>
+        {menuItems.map((item) => (
 
-        <NavLink
-          to="/manage-courses"
-          className={menuClass}
-        >
-          <FaBook />
-          Courses
-        </NavLink>
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) =>
 
-        <NavLink
-          to="/manage-lessons"
-          className={menuClass}
-        >
-          <FaVideo />
-          Lessons
-        </NavLink>
+              `
+                flex
+                items-center
+                gap-4
+                px-5
+                py-4
+                rounded-xl
+                mb-2
+                transition-all
+                duration-200
+
+                ${
+                  isActive
+                    ? "bg-cyan-600 text-white shadow-lg"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                }
+              `
+
+            }
+          >
+
+            {/* Icon */}
+
+            <span
+              className="
+                text-xl
+                w-6
+                flex
+                justify-center
+                shrink-0
+              "
+            >
+
+              {item.icon}
+
+            </span>
+
+
+            {/* Name */}
+
+            <span
+              className="
+                font-medium
+                whitespace-nowrap
+              "
+            >
+
+              {item.name}
+
+            </span>
+
+          </NavLink>
+
+        ))}
 
       </nav>
 
-      {/* Logout */}
 
-      <div className="p-6 border-t">
+      {/* ======================================
+          LOGOUT
+      ====================================== */}
+
+      <div
+        className="
+          border-t
+          border-slate-800
+          p-5
+        "
+      >
 
         <button
-          onClick={logout}
-          className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex justify-center items-center gap-3 transition"
+          type="button"
+          onClick={handleLogout}
+          className="
+            w-full
+            flex
+            items-center
+            justify-center
+            gap-3
+            bg-red-600
+            hover:bg-red-700
+            transition
+            py-3
+            rounded-xl
+            font-medium
+          "
         >
+
           <FaSignOutAlt />
+
           Logout
+
         </button>
 
       </div>
 
     </aside>
+
   );
+
 }
+
+
+// ==========================================
+// EXPORT
+// ==========================================
 
 export default AdminSidebar;

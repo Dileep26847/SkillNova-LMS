@@ -1,32 +1,102 @@
-import Hero from "../components/Hero";
-import Categories from "../components/categories";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+import Hero from "../components/landing/Hero";
+import Stats from "../components/landing/Stats";
+import WhyDataWave from "../components/landing/WhyDataWave";
+import LearningJourney from "../components/landing/LearningJourney";
+import SuccessStories from "../components/landing/SuccessStories";
+import FAQ from "../components/landing/FAQ";
+import CTA from "../components/landing/CTA";
+
 import FeaturedCourses from "../components/FeaturedCourses";
-import WhyChoose from "../components/WhyChoose";
-import DataWave from "../components/DataWave";
-import TrustedBrands from "../components/TrustedBrands";
-import Testimonials from "../components/Testimonials";
-import CallToAction from "../components/CallToAction";
+
 
 function Home() {
+
   return (
-    <div className="bg-slate-50">
-      <Hero />
 
-      <Categories />
+    <div
+      className="
+        min-h-screen
+        overflow-x-hidden
+        bg-white
+      "
+    >
 
-      <FeaturedCourses />
+      <Navbar />
 
-      <WhyChoose />
 
-      <DataWave />
+      <main>
 
-      <TrustedBrands />
+        <Hero />
 
-      <Testimonials />
 
-      <CallToAction />
+        <Stats />
+
+
+        <div
+          id="courses"
+          className="scroll-mt-24"
+        >
+
+          <FeaturedCourses />
+
+        </div>
+
+
+        <div
+          id="why-Data Lattice"
+          className="scroll-mt-24"
+        >
+
+          <WhyDataWave />
+
+        </div>
+
+
+        <div
+          id="programs"
+          className="scroll-mt-24"
+        >
+
+          <LearningJourney />
+
+        </div>
+
+
+        <div
+          id="success"
+          className="scroll-mt-24"
+        >
+
+          <SuccessStories />
+
+        </div>
+
+
+        <div
+          id="faq"
+          className="scroll-mt-24"
+        >
+
+          <FAQ />
+
+        </div>
+
+
+        <CTA />
+
+      </main>
+
+
+      <Footer />
+
     </div>
+
   );
+
 }
+
 
 export default Home;

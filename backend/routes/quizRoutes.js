@@ -1,34 +1,37 @@
 const express = require("express");
+
 const router = express.Router();
 
 const quizController = require("../controllers/quizController");
-const verifyToken = require("../middleware/authMiddleware");
 
 // ======================================
-// Get Quiz By Course
+// Create Quiz
 // ======================================
-router.get(
-  "/course/:courseId",
-  verifyToken,
-  quizController.getQuizByCourse
-);
+
+router.post("/", quizController.createQuiz);
 
 // ======================================
-// Get Quiz Questions
+// Get All Quizzes
 // ======================================
-router.get(
-  "/questions/:quizId",
-  verifyToken,
-  quizController.getQuestions
-);
+
+router.get("/", quizController.getAllQuizzes);
 
 // ======================================
-// Submit Quiz
+// Get Quiz By ID
 // ======================================
-router.post(
-  "/submit",
-  verifyToken,
-  quizController.submitQuiz
-);
+
+router.get("/:id", quizController.getQuizById);
+
+// ======================================
+// Update Quiz
+// ======================================
+
+router.put("/:id", quizController.updateQuiz);
+
+// ======================================
+// Delete Quiz
+// ======================================
+
+router.delete("/:id", quizController.deleteQuiz);
 
 module.exports = router;

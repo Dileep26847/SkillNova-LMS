@@ -1,8 +1,10 @@
 const lessonModel = require("../models/lessonModel");
 
-// ===============================
-// Create Lesson
-// ===============================
+// ======================================
+// CREATE LESSON
+// ADMIN ONLY
+// ======================================
+
 exports.createLesson = (req, res) => {
 
     const {
@@ -11,13 +13,20 @@ exports.createLesson = (req, res) => {
         description,
         video_url,
         pdf_url,
-        lesson_order
+        lesson_order,
     } = req.body;
 
-    if (!course_id || !title) {
+    if (
+        !course_id ||
+        !title ||
+        lesson_order === undefined ||
+        lesson_order === null ||
+        lesson_order === ""
+    ) {
         return res.status(400).json({
             success: false,
-            message: "Course ID and Title are required"
+            message:
+                "Course ID, Lesson Title and Lesson Order are required.",
         });
     }
 
@@ -28,130 +37,347 @@ exports.createLesson = (req, res) => {
             description,
             video_url,
             pdf_url,
-            lesson_order
+            lesson_order,
         },
-        (err) => {
+        (err, result) => {
 
             if (err) {
+
+                console.error(
+                    "CREATE LESSON ERROR:",
+                    err
+                );
+
                 return res.status(500).json({
                     success: false,
-                    message: err.message
+                    message: err.message,
                 });
+
             }
 
-            res.status(201).json({
+            return res.status(201).json({
                 success: true,
-                message: "Lesson Created Successfully"
+                message: "Lesson Created Successfully",
+                lessonId: result?.insertId,
             });
 
         }
     );
-
 };
 
-// ===============================
-// Get All Lessons
-// ===============================
+
+// ======================================
+// GET ALL LESSONS
+// ======================================
+
 exports.getAllLessons = (req, res) => {
 
-    lessonModel.getAllLessons((err, results) => {
+    const role = req.user.role;
+    const userId = req.user.id;
+
+    const callback = (err, results) => {
 
         if (err) {
+
+            console.error(
+                "GET ALL LESSONS ERROR:",
+                err
+            );
+
             return res.status(500).json({
                 success: false,
-                message: err.message
+                message: err.message,
             });
+
         }
 
-        res.json({
+        return res.status(200).json({
             success: true,
             total: results.length,
-            lessons: results
+            lessons: results,
         });
 
+    };
+
+
+    // ADMIN / MENTOR
+
+    if (
+        role === "admin" ||
+        role === "mentor"
+    ) {
+
+        return lessonModel.getAllLessons(
+            callback
+        );
+
+    }
+
+
+    // STUDENT
+
+    if (role === "student") {
+
+        return lessonModel.getAllLessonsForStudent(
+            userId,
+            callback
+        );
+
+    }
+
+
+    return res.status(403).json({
+        success: false,
+        message: "Access denied.",
     });
 
 };
 
-// ===============================
-// Get Lessons By Course
-// ===============================
-exports.getLessonsByCourse = (req, res) => {
 
-    lessonModel.getLessonsByCourse(
-        req.params.courseId,
-        (err, results) => {
+// ======================================
+// GET LESSONS BY COURSE
+// ======================================
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+exports.getLessonsByCourse = (
+    req,
+    res
+) => {
 
-            res.json({
-                success: true,
-                lessons: results
+    const { courseId } = req.params;
+
+    const role = req.user.role;
+    const userId = req.user.id;
+
+    const callback = (err, results) => {
+
+        if (err) {
+
+            console.error(
+                "GET COURSE LESSONS ERROR:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: err.message,
             });
 
         }
-    );
+
+        return res.status(200).json({
+            success: true,
+            total: results.length,
+            lessons: results,
+        });
+
+    };
+
+
+    // ADMIN / MENTOR
+
+    if (
+        role === "admin" ||
+        role === "mentor"
+    ) {
+
+        return lessonModel.getLessonsByCourse(
+            courseId,
+            callback
+        );
+
+    }
+
+
+    // STUDENT
+
+    if (role === "student") {
+
+        return lessonModel.getLessonsByCourseForStudent(
+            courseId,
+            userId,
+            callback
+        );
+
+    }
+
+
+    return res.status(403).json({
+        success: false,
+        message: "Access denied.",
+    });
 
 };
 
-// ===============================
-// Get Lesson By ID
-// ===============================
-exports.getLessonById = (req, res) => {
 
-    lessonModel.getLessonById(
-        req.params.id,
-        (err, results) => {
+// ======================================
+// GET LESSON BY ID
+// ======================================
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+exports.getLessonById = (
+    req,
+    res
+) => {
 
-            if (results.length === 0) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Lesson Not Found"
-                });
-            }
+    const { id } = req.params;
 
-            res.json({
-                success: true,
-                lesson: results[0]
+    const role = req.user.role;
+    const userId = req.user.id;
+
+    const callback = (err, results) => {
+
+        if (err) {
+
+            console.error(
+                "GET LESSON ERROR:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: err.message,
             });
 
         }
-    );
+
+        if (
+            !results ||
+            results.length === 0
+        ) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Lesson Not Found",
+            });
+
+        }
+
+        return res.status(200).json({
+            success: true,
+            lesson: results[0],
+        });
+
+    };
+
+
+    // ADMIN / MENTOR
+
+    if (
+        role === "admin" ||
+        role === "mentor"
+    ) {
+
+        return lessonModel.getLessonById(
+            id,
+            callback
+        );
+
+    }
+
+
+    // STUDENT
+
+    if (role === "student") {
+
+        return lessonModel.getLessonByIdForStudent(
+            id,
+            userId,
+            callback
+        );
+
+    }
+
+
+    return res.status(403).json({
+        success: false,
+        message: "Access denied.",
+    });
 
 };
 
-// ===============================
-// Update Lesson
-// ===============================
-exports.updateLesson = (req, res) => {
+
+// ======================================
+// UPDATE LESSON
+// ADMIN ONLY
+// ======================================
+
+exports.updateLesson = (
+    req,
+    res
+) => {
+
+    const { id } = req.params;
+
+    const {
+        course_id,
+        title,
+        description,
+        video_url,
+        pdf_url,
+        lesson_order,
+    } = req.body;
+
+
+    if (
+        !course_id ||
+        !title ||
+        lesson_order === undefined ||
+        lesson_order === null ||
+        lesson_order === ""
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Course ID, Lesson Title and Lesson Order are required.",
+        });
+
+    }
+
 
     lessonModel.updateLesson(
-        req.params.id,
-        req.body,
-        (err) => {
+        id,
+        {
+            course_id,
+            title,
+            description,
+            video_url,
+            pdf_url,
+            lesson_order,
+        },
+        (err, result) => {
 
             if (err) {
+
+                console.error(
+                    "UPDATE LESSON ERROR:",
+                    err
+                );
+
                 return res.status(500).json({
                     success: false,
-                    message: err.message
+                    message: err.message,
                 });
+
             }
 
-            res.json({
+
+            if (
+                result &&
+                result.affectedRows === 0
+            ) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Lesson Not Found",
+                });
+
+            }
+
+
+            return res.status(200).json({
                 success: true,
-                message: "Lesson Updated Successfully"
+                message:
+                    "Lesson Updated Successfully",
             });
 
         }
@@ -159,25 +385,56 @@ exports.updateLesson = (req, res) => {
 
 };
 
-// ===============================
-// Delete Lesson
-// ===============================
-exports.deleteLesson = (req, res) => {
+
+// ======================================
+// DELETE LESSON
+// ADMIN ONLY
+// ======================================
+
+exports.deleteLesson = (
+    req,
+    res
+) => {
+
+    const { id } = req.params;
+
 
     lessonModel.deleteLesson(
-        req.params.id,
-        (err) => {
+        id,
+        (err, result) => {
 
             if (err) {
+
+                console.error(
+                    "DELETE LESSON ERROR:",
+                    err
+                );
+
                 return res.status(500).json({
                     success: false,
-                    message: err.message
+                    message: err.message,
                 });
+
             }
 
-            res.json({
+
+            if (
+                result &&
+                result.affectedRows === 0
+            ) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Lesson Not Found",
+                });
+
+            }
+
+
+            return res.status(200).json({
                 success: true,
-                message: "Lesson Deleted Successfully"
+                message:
+                    "Lesson Deleted Successfully",
             });
 
         }

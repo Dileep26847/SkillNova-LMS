@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   FaUser,
   FaLock,
@@ -8,6 +9,7 @@ import {
   FaBell,
   FaEnvelope,
   FaShieldAlt,
+  FaCheckCircle,
 } from "react-icons/fa";
 
 import {
@@ -15,10 +17,24 @@ import {
   errorToast,
 } from "../utils/toast";
 
-import { changePassword } from "../services/settingsService";
+import {
+  changePassword,
+} from "../services/settingsService";
+
+import {
+  updateProfile,
+} from "../services/profileService";
+
 
 function Settings() {
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  // ======================================
+  // Form State
+  // ======================================
 
   const [form, setForm] = useState({
     full_name: user?.full_name || "",
@@ -30,179 +46,405 @@ function Settings() {
     darkMode: false,
   });
 
-  const [loading, setLoading] = useState(false);
+  // ======================================
+  // Loading States
+  // ======================================
+
+  const [profileSaving, setProfileSaving] =
+    useState(false);
+
+  const [passwordSaving, setPasswordSaving] =
+    useState(false);
+
+  // ======================================
+  // Handle Input
+  // ======================================
 
   const handleChange = (e) => {
-    const { name, value, checked, type } = e.target;
 
-    setForm({
-      ...form,
+    const {
+      name,
+      value,
+      checked,
+      type,
+    } = e.target;
+
+    setForm((previous) => ({
+      ...previous,
+
       [name]:
         type === "checkbox"
           ? checked
           : value,
-    });
+    }));
+
   };
 
-  const saveProfile = () => {
-    successToast("Profile Updated Successfully");
-  };
+  // ======================================
+  // Save Profile
+  // ======================================
 
-  const changePasswordHandler = async () => {
+  const saveProfile = async () => {
 
-    if (form.newPassword !== form.confirmPassword) {
-      errorToast("Passwords do not match");
+    if (!user?.id) {
+
+      errorToast(
+        "User session not found."
+      );
+
       return;
+
     }
 
     try {
 
-      setLoading(true);
+      setProfileSaving(true);
 
-      const data = await changePassword(
+      await updateProfile(
         user.id,
         {
-          currentPassword: form.currentPassword,
-          newPassword: form.newPassword,
+          full_name: form.full_name,
         }
       );
 
-      successToast(data.message);
+      // Update local storage
+      const updatedUser = {
+        ...user,
+        full_name: form.full_name,
+      };
 
-      setForm({
-        ...form,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
+
+      successToast(
+        "Profile updated successfully."
+      );
 
     } catch (error) {
 
+      console.error(
+        "Profile update error:",
+        error
+      );
+
       errorToast(
-        error.response?.data?.message ||
-        "Password update failed"
+        error?.response?.data?.message ||
+        "Profile update failed."
       );
 
     } finally {
 
-      setLoading(false);
+      setProfileSaving(false);
 
     }
 
   };
 
+  // ======================================
+  // Change Password
+  // ======================================
+
+  const changePasswordHandler =
+    async () => {
+
+      if (!user?.id) {
+
+        errorToast(
+          "User session not found."
+        );
+
+        return;
+
+      }
+
+      if (
+        !form.currentPassword ||
+        !form.newPassword ||
+        !form.confirmPassword
+      ) {
+
+        errorToast(
+          "Please fill all password fields."
+        );
+
+        return;
+
+      }
+
+      if (
+        form.newPassword.length < 6
+      ) {
+
+        errorToast(
+          "New password must be at least 6 characters."
+        );
+
+        return;
+
+      }
+
+      if (
+        form.newPassword !==
+        form.confirmPassword
+      ) {
+
+        errorToast(
+          "Passwords do not match."
+        );
+
+        return;
+
+      }
+
+      try {
+
+        setPasswordSaving(true);
+
+        const data =
+          await changePassword(
+            user.id,
+            {
+              currentPassword:
+                form.currentPassword,
+
+              newPassword:
+                form.newPassword,
+            }
+          );
+
+        successToast(
+          data.message ||
+          "Password updated successfully."
+        );
+
+        setForm((previous) => ({
+          ...previous,
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        }));
+
+      } catch (error) {
+
+        console.error(
+          "Password update error:",
+          error
+        );
+
+        errorToast(
+          error?.response?.data?.message ||
+          "Password update failed."
+        );
+
+      } finally {
+
+        setPasswordSaving(false);
+
+      }
+
+    };
+
+  // ======================================
+  // Render
+  // ======================================
+
   return (
 
-    <div className="bg-slate-100 min-h-screen py-12">
+    <div className="min-h-screen bg-slate-100 py-10 sm:py-12">
 
-      <div className="max-w-6xl mx-auto px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <h1 className="text-5xl font-bold mb-10">
+        {/* ==================================
+            Header
+        ================================== */}
 
-          Account Settings
+        <div className="mb-10">
 
-        </h1>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-800">
 
-        {/* Profile */}
+            Account Settings
 
-        <div className="bg-white rounded-3xl shadow-lg p-8">
+          </h1>
 
-          <div className="flex items-center gap-3 mb-8">
+          <p className="text-slate-500 mt-2">
 
-            <FaUser className="text-blue-600 text-2xl" />
+            Manage your account, security and
+            learning preferences.
 
-            <h2 className="text-3xl font-bold">
+          </p>
 
-              Profile Information
+        </div>
 
-            </h2>
 
-          </div>
+        {/* ==================================
+            Profile Information
+        ================================== */}
 
-          <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8">
+
+          <div className="flex items-center gap-4 mb-8">
+
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center">
+
+              <FaUser className="text-blue-600 text-xl" />
+
+            </div>
 
             <div>
 
-              <label className="font-semibold">
+              <h2 className="text-2xl font-bold text-slate-800">
+
+                Profile Information
+
+              </h2>
+
+              <p className="text-sm text-slate-500 mt-1">
+
+                Update your basic account information.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="grid md:grid-cols-2 gap-6">
+
+            {/* Full Name */}
+
+            <div>
+
+              <label className="block text-sm font-bold text-slate-700 mb-2">
 
                 Full Name
 
               </label>
 
-              <div className="relative mt-2">
+              <div className="relative">
 
-                <FaUser className="absolute left-4 top-4 text-gray-400" />
+                <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
 
                 <input
                   type="text"
                   name="full_name"
                   value={form.full_name}
                   onChange={handleChange}
-                  className="w-full border rounded-xl py-3 pl-12 pr-4"
+                  className="w-full border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
               </div>
 
             </div>
 
+
+            {/* Email */}
+
             <div>
 
-              <label className="font-semibold">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
 
-                Email
+                Email Address
 
               </label>
 
-              <div className="relative mt-2">
+              <div className="relative">
 
-                <FaEnvelope className="absolute left-4 top-4 text-gray-400" />
+                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
 
                 <input
                   type="email"
                   value={form.email}
                   disabled
-                  className="w-full border rounded-xl py-3 pl-12 pr-4 bg-gray-100"
+                  className="w-full border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 bg-slate-100 text-slate-500 cursor-not-allowed"
                 />
 
               </div>
+
+              <p className="text-xs text-slate-400 mt-2">
+
+                Email address cannot be changed here.
+
+              </p>
 
             </div>
 
           </div>
 
+
           <button
             onClick={saveProfile}
-            className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl flex items-center gap-3"
+            disabled={profileSaving}
+            className="mt-8 inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-7 py-3.5 rounded-xl font-bold transition"
           >
 
-            <FaSave />
+            {profileSaving ? (
 
-            Save Changes
+              <>
+                <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+
+                Saving...
+
+              </>
+
+            ) : (
+
+              <>
+                <FaSave />
+
+                Save Changes
+
+              </>
+
+            )}
 
           </button>
 
         </div>
-                {/* Change Password */}
 
-        <div className="bg-white rounded-3xl shadow-lg p-8 mt-10">
 
-          <div className="flex items-center gap-3 mb-8">
+        {/* ==================================
+            Change Password
+        ================================== */}
 
-            <FaLock className="text-green-600 text-2xl" />
+        <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mt-8">
 
-            <h2 className="text-3xl font-bold">
+          <div className="flex items-center gap-4 mb-8">
 
-              Change Password
+            <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center">
 
-            </h2>
+              <FaLock className="text-green-600 text-xl" />
 
-          </div>
-
-          <div className="space-y-6">
+            </div>
 
             <div>
 
-              <label className="font-semibold">
+              <h2 className="text-2xl font-bold text-slate-800">
+
+                Change Password
+
+              </h2>
+
+              <p className="text-sm text-slate-500 mt-1">
+
+                Keep your account secure with a strong password.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="grid md:grid-cols-3 gap-6">
+
+            {/* Current */}
+
+            <div>
+
+              <label className="block text-sm font-bold text-slate-700 mb-2">
 
                 Current Password
 
@@ -213,15 +455,18 @@ function Settings() {
                 name="currentPassword"
                 value={form.currentPassword}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-4 mt-2"
-                placeholder="Enter current password"
+                placeholder="Current password"
+                className="w-full border border-slate-200 rounded-xl p-3.5 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
 
             </div>
 
+
+            {/* New */}
+
             <div>
 
-              <label className="font-semibold">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
 
                 New Password
 
@@ -232,15 +477,18 @@ function Settings() {
                 name="newPassword"
                 value={form.newPassword}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-4 mt-2"
-                placeholder="Enter new password"
+                placeholder="New password"
+                className="w-full border border-slate-200 rounded-xl p-3.5 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
 
             </div>
 
+
+            {/* Confirm */}
+
             <div>
 
-              <label className="font-semibold">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
 
                 Confirm Password
 
@@ -251,61 +499,89 @@ function Settings() {
                 name="confirmPassword"
                 value={form.confirmPassword}
                 onChange={handleChange}
-                className="w-full border rounded-xl p-4 mt-2"
-                placeholder="Confirm new password"
+                placeholder="Confirm password"
+                className="w-full border border-slate-200 rounded-xl p-3.5 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
 
             </div>
 
           </div>
 
+
           <button
             onClick={changePasswordHandler}
-            disabled={loading}
-            className="mt-8 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold transition"
+            disabled={passwordSaving}
+            className="mt-8 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-7 py-3.5 rounded-xl font-bold transition"
           >
-            {loading
+
+            {passwordSaving
               ? "Updating..."
               : "Update Password"}
+
           </button>
 
         </div>
 
-        {/* Preferences */}
 
-        <div className="bg-white rounded-3xl shadow-lg p-8 mt-10">
+        {/* ==================================
+            Preferences
+        ================================== */}
 
-          <div className="flex items-center gap-3 mb-8">
+        <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mt-8">
 
-            <FaShieldAlt className="text-purple-600 text-2xl" />
+          <div className="flex items-center gap-4 mb-8">
 
-            <h2 className="text-3xl font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center">
 
-              Preferences
+              <FaShieldAlt className="text-purple-600 text-xl" />
 
-            </h2>
+            </div>
+
+            <div>
+
+              <h2 className="text-2xl font-bold text-slate-800">
+
+                Preferences
+
+              </h2>
+
+              <p className="text-sm text-slate-500 mt-1">
+
+                Control how Data Lattice communicates with you.
+
+              </p>
+
+            </div>
 
           </div>
 
-          <div className="space-y-6">
 
-            <label className="flex justify-between items-center border rounded-2xl p-5">
+          <div className="space-y-4">
 
-              <div className="flex items-center gap-3">
+            {/* Notifications */}
 
-                <FaBell className="text-blue-600" />
+            <label className="flex items-center justify-between gap-5 border border-slate-200 rounded-2xl p-5 cursor-pointer hover:bg-slate-50 transition">
+
+              <div className="flex items-center gap-4">
+
+                <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
+
+                  <FaBell className="text-blue-600" />
+
+                </div>
 
                 <div>
 
-                  <h3 className="font-semibold">
+                  <h3 className="font-bold text-slate-800">
 
                     Email Notifications
 
                   </h3>
 
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-sm text-slate-500 mt-1">
 
-                    Receive notifications about courses.
+                    Receive updates about courses,
+                    assignments and learning activity.
 
                   </p>
 
@@ -318,28 +594,35 @@ function Settings() {
                 name="notifications"
                 checked={form.notifications}
                 onChange={handleChange}
-                className="w-5 h-5"
+                className="w-5 h-5 accent-blue-600"
               />
 
             </label>
 
-            <label className="flex justify-between items-center border rounded-2xl p-5">
 
-              <div className="flex items-center gap-3">
+            {/* Dark Mode */}
 
-                <FaMoon className="text-indigo-600" />
+            <div className="flex items-center justify-between gap-5 border border-slate-200 rounded-2xl p-5 opacity-60">
+
+              <div className="flex items-center gap-4">
+
+                <div className="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center">
+
+                  <FaMoon className="text-indigo-600" />
+
+                </div>
 
                 <div>
 
-                  <h3 className="font-semibold">
+                  <h3 className="font-bold text-slate-800">
 
                     Dark Mode
 
                   </h3>
 
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-sm text-slate-500 mt-1">
 
-                    Coming Soon
+                    Dark mode will be available in a future update.
 
                   </p>
 
@@ -349,37 +632,92 @@ function Settings() {
 
               <input
                 type="checkbox"
-                name="darkMode"
                 checked={form.darkMode}
-                onChange={handleChange}
                 disabled
                 className="w-5 h-5"
               />
 
-            </label>
+            </div>
 
           </div>
 
         </div>
-                {/* Danger Zone */}
 
-        <div className="bg-white rounded-3xl shadow-lg p-8 mt-10 border border-red-200">
 
-          <div className="flex items-center gap-3 mb-6">
+        {/* ==================================
+            Account Security
+        ================================== */}
 
-            <FaTrash className="text-red-600 text-2xl" />
+        <div className="bg-green-50 border border-green-100 rounded-3xl p-6 sm:p-8 mt-8">
 
-            <h2 className="text-3xl font-bold text-red-600">
-              Danger Zone
-            </h2>
+          <div className="flex gap-4">
+
+            <FaCheckCircle className="text-green-600 text-xl mt-1" />
+
+            <div>
+
+              <h3 className="font-bold text-green-800">
+
+                Account Security
+
+              </h3>
+
+              <p className="text-green-700 text-sm mt-1 leading-6">
+
+                Your account is protected by authenticated
+                access. Never share your password or
+                authentication credentials with anyone.
+
+              </p>
+
+            </div>
 
           </div>
 
-          <p className="text-gray-600 leading-7">
-            Deleting your account is permanent. All your enrolled
-            courses, progress, certificates, and profile information
-            will be removed permanently.
+        </div>
+
+
+        {/* ==================================
+            Danger Zone
+        ================================== */}
+
+        <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mt-8 border border-red-200">
+
+          <div className="flex items-center gap-4 mb-5">
+
+            <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+
+              <FaTrash className="text-red-600 text-xl" />
+
+            </div>
+
+            <div>
+
+              <h2 className="text-2xl font-bold text-red-600">
+
+                Danger Zone
+
+              </h2>
+
+              <p className="text-sm text-slate-500 mt-1">
+
+                Permanent account actions.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <p className="text-slate-600 leading-7 max-w-3xl">
+
+            Deleting your account is permanent. Your
+            enrolled courses, progress, certificates and
+            profile information may be removed permanently.
+
           </p>
+
 
           <button
             onClick={() =>
@@ -387,11 +725,13 @@ function Settings() {
                 "Delete Account feature will be available soon."
               )
             }
-            className="mt-8 bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold transition flex items-center gap-3"
+            className="mt-7 inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-7 py-3.5 rounded-xl font-bold transition"
           >
+
             <FaTrash />
 
             Delete Account
+
           </button>
 
         </div>

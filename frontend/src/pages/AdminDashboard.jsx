@@ -1,33 +1,78 @@
-import AdminSidebar from "../components/admin/AdminSidebar";
-import AdminTopbar from "../components/admin/AdminTopbar";
 import AdminStats from "../components/admin/AdminStats";
 import QuickActions from "../components/admin/QuickActions";
 import RecentCourses from "../components/admin/RecentCourses";
+import RecentActivity from "../components/admin/RecentActivity";
+
+import StudentGrowthChart from "../components/admin/charts/StudentGrowthChart";
+import CourseDistributionChart from "../components/admin/charts/CourseDistributionChart";
+import SupportAnalyticsChart from "../components/admin/charts/SupportAnalyticsChart";
+
 
 function AdminDashboard() {
-  return (
-    <div className="flex bg-slate-100 min-h-screen">
 
-      <AdminSidebar />
+    return (
 
-      <main className="flex-1 p-8 space-y-8">
+        <div className="space-y-8">
 
-        <AdminTopbar />
+            {/* =====================================================
+                ADMIN DASHBOARD CONTENT
 
-        <AdminStats />
+                IMPORTANT:
+                Sidebar and Topbar are provided by AdminLayout.
+                Do NOT add them here.
+            ===================================================== */}
 
-        <div className="grid lg:grid-cols-2 gap-8">
 
-          <QuickActions />
+            {/* =====================================================
+                STATISTICS
+            ===================================================== */}
 
-          <RecentCourses />
+            <AdminStats />
+
+
+            {/* =====================================================
+                STUDENT GROWTH + QUICK ACTIONS
+            ===================================================== */}
+
+            <div className="grid xl:grid-cols-3 gap-8">
+
+                <div className="xl:col-span-2">
+
+                    <StudentGrowthChart />
+
+                </div>
+
+                <QuickActions />
+
+            </div>
+
+
+            {/* =====================================================
+                COURSE + SUPPORT ANALYTICS
+            ===================================================== */}
+
+            <div className="grid xl:grid-cols-3 gap-8">
+
+                <RecentCourses />
+
+                <CourseDistributionChart />
+
+                <SupportAnalyticsChart />
+
+            </div>
+
+
+            {/* =====================================================
+                RECENT ACTIVITY
+            ===================================================== */}
+
+            <RecentActivity />
 
         </div>
 
-      </main>
+    );
 
-    </div>
-  );
 }
+
 
 export default AdminDashboard;

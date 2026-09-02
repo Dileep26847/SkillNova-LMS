@@ -1,35 +1,47 @@
 import api from "./api";
 
-// ==========================================
-// Enroll Course
-// ==========================================
+// ======================================
+// Enroll Student
+// ======================================
+
 export const enrollCourse = async (userId, courseId) => {
-  const response = await api.post("/enrollments/enroll", {
-    user_id: userId,
-    course_id: courseId,
-  });
 
-  return response.data;
+    const response = await api.post(
+        "/enrollments",
+        {
+            user_id: userId,
+            course_id: courseId
+        }
+    );
+
+    return response.data;
+
 };
 
-// ==========================================
-// My Courses
-// ==========================================
-export const getMyCourses = async (userId) => {
-  const response = await api.get(
-    `/enrollments/my-courses/${userId}`
-  );
+// ======================================
+// Get Student Courses
+// ======================================
 
-  return response.data;
+export const getMyCourses = async (studentId) => {
+
+    const response = await api.get(
+        `/student/dashboard/${studentId}/courses`
+    );
+
+    return response.data;
+
 };
 
-// ==========================================
-// Cancel Enrollment (Optional)
-// ==========================================
+// ======================================
+// Cancel Enrollment
+// ======================================
+
 export const cancelEnrollment = async (enrollmentId) => {
-  const response = await api.delete(
-    `/enrollments/${enrollmentId}`
-  );
 
-  return response.data;
+    const response = await api.delete(
+        `/enrollments/${enrollmentId}`
+    );
+
+    return response.data;
+
 };

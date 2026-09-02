@@ -1,101 +1,111 @@
 import { useEffect, useState } from "react";
 import {
-  FaUsers,
-  FaBookOpen,
-  FaVideo,
   FaUserGraduate,
+  FaBookOpen,
+  FaHeadset,
+  FaDollarSign,
 } from "react-icons/fa";
-import { motion } from "framer-motion";
 
-import { getDashboardStats } from "../../services/adminService";
+import { getDashboard } from "../../services/adminService";
+import StatCard from "../common/StatCard";
 
 function AdminStats() {
+
   const [stats, setStats] = useState({
-    totalStudents: 0,
-    totalCourses: 0,
-    totalLessons: 0,
-    totalEnrollments: 0,
+    students: 0,
+    courses: 0,
+    tickets: 0,
+    revenue: 0,
   });
 
   useEffect(() => {
-    fetchStats();
+    loadDashboard();
   }, []);
 
-  const fetchStats = async () => {
+  const loadDashboard = async () => {
+
     try {
-      const data = await getDashboardStats();
+
+      const data = await getDashboard();
 
       setStats(data.stats);
 
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+
+      console.log(err);
+
     }
+
   };
 
   const cards = [
+
     {
       title: "Students",
-      value: stats.totalStudents,
-      icon: <FaUsers size={28} />,
-      color: "bg-blue-600",
+      value: stats.students,
+      icon: <FaUserGraduate />,
+      color: "bg-cyan-100",
+      iconColor: "text-cyan-600",
     },
+
     {
       title: "Courses",
-      value: stats.totalCourses,
-      icon: <FaBookOpen size={28} />,
-      color: "bg-green-600",
+      value: stats.courses,
+      icon: <FaBookOpen />,
+      color: "bg-emerald-100",
+      iconColor: "text-emerald-600",
     },
+
     {
-      title: "Lessons",
-      value: stats.totalLessons,
-      icon: <FaVideo size={28} />,
-      color: "bg-orange-500",
+      title: "Open Tickets",
+      value: stats.tickets,
+      icon: <FaHeadset />,
+      color: "bg-amber-100",
+      iconColor: "text-amber-600",
     },
+
     {
-      title: "Enrollments",
-      value: stats.totalEnrollments,
-      icon: <FaUserGraduate size={28} />,
-      color: "bg-purple-600",
+      title: "Revenue",
+      value: "Coming Soon",
+      icon: <FaDollarSign />,
+      color: "bg-violet-100",
+      iconColor: "text-violet-600",
     },
+
   ];
 
   return (
+
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-      {cards.map((card, index) => (
+      {
 
-        <motion.div
-          key={index}
-          whileHover={{
-            y: -8,
-            scale: 1.02,
-          }}
-          transition={{
-            duration: 0.3,
-          }}
-          className="bg-white rounded-3xl shadow-lg p-6"
-        >
+        cards.map((card, index) => (
 
-          <div
-            className={`${card.color} w-14 h-14 rounded-xl flex items-center justify-center text-white`}
-          >
-            {card.icon}
-          </div>
+          <StatCard
 
-          <h3 className="mt-5 text-gray-500">
-            {card.title}
-          </h3>
+            key={index}
 
-          <h1 className="text-4xl font-bold mt-2">
-            {card.value}
-          </h1>
+            title={card.title}
 
-        </motion.div>
+            value={card.value}
 
-      ))}
+            icon={card.icon}
+
+            color={card.color}
+
+            iconColor={card.iconColor}
+
+          />
+
+        ))
+
+      }
 
     </div>
+
   );
+
 }
 
 export default AdminStats;

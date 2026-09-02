@@ -1,13 +1,21 @@
 const express = require("express");
+
 const router = express.Router();
 
-const settingsController = require("../controllers/settingsController");
-const verifyToken = require("../middleware/authMiddleware");
+const verifyToken =
+    require("../middleware/authMiddleware");
+
+const settingsController =
+    require("../controllers/settingsController");
+
+// ======================================
+// CHANGE PASSWORD
+// ======================================
 
 router.put(
-  "/change-password/:id",
-  verifyToken,
-  settingsController.changePassword
+    "/change-password",
+    verifyToken,
+    settingsController.changePassword
 );
 
 module.exports = router;

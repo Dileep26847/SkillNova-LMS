@@ -1,42 +1,121 @@
-import { FaPlus, FaEdit, FaTrash, FaUsers } from "react-icons/fa";
+import {
+  FaBook,
+  FaUserGraduate,
+  FaHeadset,
+  FaCertificate,
+  FaUserTie,
+  FaCog,
+} from "react-icons/fa";
+
+import Card from "../common/Card";
 
 function QuickActions() {
 
+  const actions = [
+
+    {
+      title: "Add Course",
+      icon: <FaBook />,
+      color: "bg-cyan-600",
+    },
+
+    {
+      title: "Add Student",
+      icon: <FaUserGraduate />,
+      color: "bg-emerald-600",
+    },
+
+    {
+      title: "Support",
+      icon: <FaHeadset />,
+      color: "bg-amber-500",
+    },
+
+    {
+      title: "Certificates",
+      icon: <FaCertificate />,
+      color: "bg-violet-600",
+    },
+
+    {
+      title: "Mentors",
+      icon: <FaUserTie />,
+      color: "bg-pink-600",
+    },
+
+    {
+      title: "Settings",
+      icon: <FaCog />,
+      color: "bg-slate-700",
+    },
+
+  ];
+
   return (
 
-    <div className="bg-white rounded-3xl shadow-lg p-8">
+    <Card
+      title="Quick Actions"
+      subtitle="Frequently used admin shortcuts"
+    >
 
-      <h2 className="text-2xl font-bold mb-8">
-        Quick Actions
-      </h2>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
 
-      <div className="grid md:grid-cols-2 gap-5">
+        {
 
-        <button className="bg-blue-600 text-white rounded-xl py-4 flex justify-center gap-3 items-center">
-          <FaPlus />
-          Add Course
-        </button>
+          actions.map((action, index) => (
 
-        <button className="bg-green-600 text-white rounded-xl py-4 flex justify-center gap-3 items-center">
-          <FaEdit />
-          Edit Course
-        </button>
+            <button
+              key={index}
+              className="
+                group
+                rounded-2xl
+                p-6
+                text-white
+                transition-all
+                duration-300
+                hover:scale-105
+                hover:shadow-xl
+              "
+              style={{
+                background:
+                  action.color === "bg-cyan-600"
+                    ? "#0891b2"
+                    : action.color === "bg-emerald-600"
+                    ? "#059669"
+                    : action.color === "bg-amber-500"
+                    ? "#f59e0b"
+                    : action.color === "bg-violet-600"
+                    ? "#7c3aed"
+                    : action.color === "bg-pink-600"
+                    ? "#db2777"
+                    : "#334155",
+              }}
+            >
 
-        <button className="bg-red-500 text-white rounded-xl py-4 flex justify-center gap-3 items-center">
-          <FaTrash />
-          Delete Course
-        </button>
+              <div className="text-3xl transition-transform duration-300 group-hover:scale-125">
 
-        <button className="bg-purple-600 text-white rounded-xl py-4 flex justify-center gap-3 items-center">
-          <FaUsers />
-          Students
-        </button>
+                {action.icon}
+
+              </div>
+
+              <h3 className="mt-5 font-bold text-lg">
+
+                {action.title}
+
+              </h3>
+
+            </button>
+
+          ))
+
+        }
 
       </div>
 
-    </div>
+    </Card>
 
   );
+
 }
 
 export default QuickActions;

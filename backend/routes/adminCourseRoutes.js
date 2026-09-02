@@ -1,51 +1,72 @@
 const express = require("express");
 const router = express.Router();
 
-const adminCourseController = require("../controllers/adminCourseController");
-const verifyToken = require("../middleware/authMiddleware");
+const adminCourseController =
+  require("../controllers/adminCourseController");
+
+const verifyToken =
+  require("../middleware/authMiddleware");
+
+const authorizeRoles =
+  require("../middleware/roleMiddleware");
 
 // ==========================================
-// Get All Courses
+// GET ALL COURSES
+// ADMIN ONLY
 // ==========================================
+
 router.get(
   "/courses",
   verifyToken,
+  authorizeRoles("admin"),
   adminCourseController.getAllCourses
 );
 
 // ==========================================
-// Get Course By ID
+// GET COURSE BY ID
+// ADMIN ONLY
 // ==========================================
+
 router.get(
   "/courses/:id",
   verifyToken,
+  authorizeRoles("admin"),
   adminCourseController.getCourseById
 );
 
 // ==========================================
-// Add Course
+// ADD COURSE
+// ADMIN ONLY
 // ==========================================
+
 router.post(
   "/courses",
   verifyToken,
+  authorizeRoles("admin"),
   adminCourseController.addCourse
 );
 
 // ==========================================
-// Update Course
+// UPDATE COURSE
+// ADMIN ONLY
 // ==========================================
+
 router.put(
   "/courses/:id",
   verifyToken,
+  authorizeRoles("admin"),
   adminCourseController.updateCourse
 );
 
 // ==========================================
-// Delete Course
+// DELETE COURSE
+// ADMIN ONLY
 // ==========================================
+
 router.delete(
   "/courses/:id",
   verifyToken,
+  authorizeRoles("admin"),
   adminCourseController.deleteCourse
 );
 

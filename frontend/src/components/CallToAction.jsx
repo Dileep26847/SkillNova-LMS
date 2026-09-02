@@ -10,7 +10,7 @@ function CallToAction() {
         </h2>
 
         <p className="text-blue-100 mt-6 text-xl">
-          Join thousands of students already learning with SkillNova.
+          Join thousands of students already learning with Data Lattice.
         </p>
 
         <button className="mt-10 bg-white text-blue-600 px-8 py-4 rounded-2xl font-semibold flex items-center gap-3 mx-auto hover:scale-105 transition">

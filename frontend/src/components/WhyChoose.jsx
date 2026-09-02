@@ -36,7 +36,7 @@ function WhyChoose() {
         <div className="text-center">
 
           <h2 className="text-4xl font-bold">
-            Why Choose SkillNova?
+            Why Choose Data Lattice?
           </h2>
 
           <p className="mt-4 text-gray-500">

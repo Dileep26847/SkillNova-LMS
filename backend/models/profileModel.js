@@ -69,6 +69,32 @@ const updateProfile = (userId, profile, callback) => {
   );
 };
 
+// ======================================
+// Update User Basic Information
+// ======================================
+
+const updateUserBasicInfo = (
+    userId,
+    fullName,
+    callback
+) => {
+
+    const sql = `
+        UPDATE users
+        SET full_name = ?
+        WHERE id = ?
+    `;
+
+    db.query(
+        sql,
+        [
+            fullName,
+            userId
+        ],
+        callback
+    );
+
+};
 // ==========================
 // Check Existing Profile
 // ==========================
@@ -81,8 +107,9 @@ const checkProfile = (userId, callback) => {
 };
 
 module.exports = {
-  getProfileByUserId,
-  createProfile,
-  updateProfile,
-  checkProfile,
+    getProfileByUserId,
+    createProfile,
+    updateProfile,
+    checkProfile,
+    updateUserBasicInfo
 };

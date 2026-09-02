@@ -1,24 +1,105 @@
 const express = require("express");
+
 const router = express.Router();
 
-const lessonController = require("../controllers/lessonController");
+const lessonController =
+    require("../controllers/lessonController");
 
-// Create Lesson
-router.post("/", lessonController.createLesson);
+const verifyToken =
+    require("../middleware/authMiddleware");
 
-// Get All Lessons
-router.get("/", lessonController.getAllLessons);
+const authorizeRoles =
+    require("../middleware/roleMiddleware");
 
-// Get Lessons By Course
-router.get("/course/:courseId", lessonController.getLessonsByCourse);
 
-// Get Lesson By ID
-router.get("/:id", lessonController.getLessonById);
+// ======================================
+// CREATE LESSON
+// ADMIN ONLY
+// ======================================
 
-// Update Lesson
-router.put("/:id", lessonController.updateLesson);
+router.post(
+    "/",
+    verifyToken,
+    authorizeRoles("admin"),
+    lessonController.createLesson
+);
 
-// Delete Lesson
-router.delete("/:id", lessonController.deleteLesson);
+
+// ======================================
+// GET ALL LESSONS
+// ADMIN / MENTOR / STUDENT
+// ======================================
+
+router.get(
+    "/",
+    verifyToken,
+    authorizeRoles(
+        "admin",
+        "mentor",
+        "student"
+    ),
+    lessonController.getAllLessons
+);
+
+
+// ======================================
+// GET LESSONS BY COURSE
+// ADMIN / MENTOR / STUDENT
+// ======================================
+
+router.get(
+    "/course/:courseId",
+    verifyToken,
+    authorizeRoles(
+        "admin",
+        "mentor",
+        "student"
+    ),
+    lessonController.getLessonsByCourse
+);
+
+
+// ======================================
+// GET LESSON BY ID
+// ADMIN / MENTOR / STUDENT
+// ======================================
+
+router.get(
+    "/:id",
+    verifyToken,
+    authorizeRoles(
+        "admin",
+        "mentor",
+        "student"
+    ),
+    lessonController.getLessonById
+);
+
+
+// ======================================
+// UPDATE LESSON
+// ADMIN ONLY
+// ======================================
+
+router.put(
+    "/:id",
+    verifyToken,
+    authorizeRoles("admin"),
+    lessonController.updateLesson
+);
+
+
+// ======================================
+// DELETE LESSON
+// ADMIN ONLY
+// ======================================
+
+router.delete(
+    "/:id",
+    verifyToken,
+    authorizeRoles("admin"),
+    lessonController.deleteLesson
+);
+
 
 module.exports = router;

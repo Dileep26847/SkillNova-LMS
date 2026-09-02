@@ -1,49 +1,103 @@
 const express = require("express");
+
 const router = express.Router();
 
-const courseController = require("../controllers/courseController");
-const verifyToken = require("../middleware/authMiddleware");
-const authorizeRoles = require("../middleware/roleMiddleware");
+const {
+  getCourses,
+  searchCourses,
+  createCourse,
+  updateCourse,
+  deleteCourse,
+} = require("../controllers/courseController");
 
-// ======================================
-// Public Routes
-// ======================================
+const verifyToken =
+  require("../middleware/authMiddleware");
 
-// Get All Courses
-router.get("/", courseController.getAllCourses);
+const authorizeRoles =
+  require("../middleware/roleMiddleware");
 
-// Search Courses
-router.get("/search", courseController.searchCourses);
 
-// Get Course By ID
-router.get("/:id", courseController.getCourseById);
+// ============================================================
+// PUBLIC COURSE CATALOGUE
+// ============================================================
+//
+// Anyone can view available courses.
+//
+// This is intentionally PUBLIC because:
+// - Landing page visitors need to browse courses
+// - Users should not be forced to login just to see courses
+// - Login/enrollment happens later
+//
+// GET /api/courses
+// ============================================================
 
-// ======================================
-// Protected Routes
-// ======================================
-
-// Create Course
-router.post(
+router.get(
   "/",
-  verifyToken,
-  authorizeRoles("mentor", "admin"),
-  courseController.createCourse
+  getCourses
 );
 
-// Update Course
+
+// ============================================================
+// PUBLIC COURSE SEARCH
+// ============================================================
+//
+// Anyone can search the course catalogue.
+//
+// GET /api/courses/search?q=python
+// ============================================================
+
+router.get(
+  "/search",
+  searchCourses
+);
+
+
+// ============================================================
+// CREATE COURSE
+// ADMIN ONLY
+// ============================================================
+//
+// POST /api/courses/create-course
+// ============================================================
+
+router.post(
+  "/create-course",
+  verifyToken,
+  authorizeRoles("admin"),
+  createCourse
+);
+
+
+// ============================================================
+// UPDATE COURSE
+// ADMIN ONLY
+// ============================================================
+//
+// PUT /api/courses/update-course/:id
+// ============================================================
+
 router.put(
-  "/:id",
+  "/update-course/:id",
   verifyToken,
-  authorizeRoles("mentor", "admin"),
-  courseController.updateCourse
+  authorizeRoles("admin"),
+  updateCourse
 );
 
-// Delete Course
+
+// ============================================================
+// DELETE COURSE
+// ADMIN ONLY
+// ============================================================
+//
+// DELETE /api/courses/delete-course/:id
+// ============================================================
+
 router.delete(
-  "/:id",
+  "/delete-course/:id",
   verifyToken,
-  authorizeRoles("mentor", "admin"),
-  courseController.deleteCourse
+  authorizeRoles("admin"),
+  deleteCourse
 );
+
 
 module.exports = router;
